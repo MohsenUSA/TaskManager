@@ -1404,7 +1404,7 @@
                     <p><strong>✨ Key Features:</strong></p>
                     <ul>
                         <li>🕐 <strong>Real-time Tracking</strong> - Current tasks highlighted with time indicator</li>
-                        <li>👥 <strong>Smart Assignment</strong> - Click "All Team ➡️" to assign tasks to employees</li>
+                        <li>👥 <strong>Smart Assignment</strong> - Click "Everyone ➡️" to assign tasks to employees</li>
                         <li>✅ <strong>Update Status</strong> - Click status badges to change task progress</li>
                         <li>🔍 <strong>Search & Filter</strong> - Enter criteria and click Search button to filter</li>
                         <li>📊 <strong>Live Metrics</strong> - View priority, status, and employee breakdowns</li>
@@ -2000,7 +2000,7 @@
                 const statusOptions = ['Pending', 'In Progress', 'Completed', 'Cancelled'];
                 const currentStatus = task.Status || 'Pending';
                 const assignedTo = task.Assigned || 'Unassigned';
-                const isAllTeam = assignedTo.toLowerCase() === 'all team' || assignedTo.toLowerCase() === 'everyone';
+                const isAllTeam = assignedTo.toLowerCase() === 'everyone';
 
                 tasksHTML += `
                     <div class="task-card priority-${priority} status-${status} ${taskClass}" ${isCurrentTask ? `data-current-time="Current Time: ${now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })}"` : ''} style="position: relative;">
@@ -2165,15 +2165,30 @@
 
         function assignToMe(event, taskId) {
             event.stopPropagation();
-            
-            // Get list of employees from the loaded data
-            const employeeList = employees.map(emp => emp.Name).filter(name => name && name.trim() !== '');
-            
-            if (employeeList.length === 0) {
+
+            // Check if employees array exists and has items
+            if (!employees || employees.length === 0) {
                 alert('No employees loaded from Excel file. Please upload an Excel file with an "Employees" sheet first.');
                 return;
             }
-            
+
+            // Get list of employees from the loaded data
+            // Try different property names (Name, name, or first property)
+            const employeeList = employees.map(emp => {
+                if (emp.Name) return emp.Name;
+                if (emp.name) return emp.name;
+                if (emp.Employee) return emp.Employee;
+                if (emp.employee) return emp.employee;
+                // If none of the above, try the first property value
+                const firstValue = Object.values(emp)[0];
+                return typeof firstValue === 'string' ? firstValue : null;
+            }).filter(name => name && name.trim() !== '');
+
+            if (employeeList.length === 0) {
+                alert('No valid employee names found. Please ensure your Employees sheet has a "Name" column with employee names.');
+                return;
+            }
+
             // Show employee selection dropdown
             showEmployeeSelector(taskId, employeeList);
         }
@@ -2241,7 +2256,7 @@
         }
 
         function changeEmployeeName() {
-            alert('This feature is not needed anymore. Click on "All Team" tasks to select from employee list.');
+            alert('This feature is not needed anymore. Click on "Everyone" tasks to select from employee list.');
         }
 
         function scrollToCurrentTime(smooth = true) {
