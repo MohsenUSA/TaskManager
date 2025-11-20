@@ -914,6 +914,10 @@
             justify-content: center;
         }
 
+        .floating-anchor.at-current .floating-anchor-icon {
+            font-weight: 900;
+        }
+
         /* Make the up arrow white when shown */
         .floating-anchor.at-current .floating-anchor-icon {
             color: white;
@@ -1079,8 +1083,12 @@
             margin: 25px 0;
             border-radius: 2px;
             box-shadow: 0 0 15px rgba(220, 53, 69, 0.6);
-            animation: pulse 2s infinite;
+            animation: pulse 10s infinite;
             z-index: 0;
+        }
+
+        .current-time-indicator.no-animation {
+            animation: none;
         }
 
         .current-time-indicator::before {
@@ -1096,7 +1104,11 @@
             border: 3px solid white;
             box-shadow: 0 0 15px rgba(220, 53, 69, 0.9);
             z-index: 10;
-            animation: pulseCircle 2s infinite;
+            animation: pulseCircle 10s infinite;
+        }
+
+        .current-time-indicator.no-animation::before {
+            animation: none;
         }
 
         /* Only show time label on standalone indicators (not passing through cards) */
@@ -1149,8 +1161,12 @@
         .task-card.current {
             border: 3px solid #dc3545;
             box-shadow: 0 4px 20px rgba(220, 53, 69, 0.4);
-            animation: highlight 2s infinite;
+            animation: highlight 10s infinite;
             background: linear-gradient(135deg, #fff5f5 0%, #ffffff 100%);
+        }
+
+        .task-card.current.no-animation {
+            animation: none;
         }
 
         .task-card.current::before {
@@ -1598,6 +1614,21 @@
     </div>
 
     <script>
+        // ============================================
+        // ANIMATION SETTINGS (Easy Configuration)
+        // ============================================
+        // Controls heartbeat/pulse animations for:
+        // - Current time indicator line (red line)
+        // - Red circle indicator
+        // - Current task card highlight
+        //
+        // ENABLE_ANIMATIONS: Set to false to turn off all animations
+        // ANIMATION_INTERVAL: Change duration (e.g., '2s', '5s', '10s', '30s')
+        // ============================================
+        const ENABLE_ANIMATIONS = true;        // Set to false to disable all animations
+        const ANIMATION_INTERVAL = '10s';      // Animation cycle duration (e.g., '2s', '5s', '10s')
+        // ============================================
+
         let allTasks = [];
         let taskTemplates = [];
         let employees = [];
@@ -1994,18 +2025,20 @@
 
                 // Add current time indicator BEFORE this task if needed
                 if (showIndicatorBefore && isToday) {
-                    tasksHTML += `<div class="current-time-indicator" data-time="📍 Current Time: ${now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}"></div>`;
+                    const animClass = ENABLE_ANIMATIONS ? '' : ' no-animation';
+                    tasksHTML += `<div class="current-time-indicator${animClass}" data-time="📍 Current Time: ${now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })}"></div>`;
                 }
 
                 const statusOptions = ['Pending', 'In Progress', 'Completed', 'Cancelled'];
                 const currentStatus = task.Status || 'Pending';
                 const assignedTo = task.Assigned || 'Unassigned';
                 const isAllTeam = assignedTo.toLowerCase() === 'everyone';
+                const animClass = (!ENABLE_ANIMATIONS && taskClass === 'current') ? ' no-animation' : '';
 
                 tasksHTML += `
-                    <div class="task-card priority-${priority} status-${status} ${taskClass}" ${isCurrentTask ? `data-current-time="Current Time: ${now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })}"` : ''} style="position: relative;">
+                    <div class="task-card priority-${priority} status-${status} ${taskClass}${animClass}" ${isCurrentTask ? `data-current-time="Current Time: ${now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })}"` : ''} style="position: relative;">
                         ${isCurrentTask ? `
-                            <div class="current-time-indicator" style="position: absolute; top: 50%; left: -20px; right: -20px; transform: translateY(-50%); margin: 0; z-index: 0;"></div>
+                            <div class="current-time-indicator${ENABLE_ANIMATIONS ? '' : ' no-animation'}" style="position: absolute; top: 50%; left: -20px; right: -20px; transform: translateY(-50%); margin: 0; z-index: 0;"></div>
                         ` : ''}
                         <div style="position: relative; z-index: 5; background: white; padding: 10px; margin: -10px;">
                             <div class="task-header">
@@ -2050,7 +2083,8 @@
             if (isToday && !timeIndicatorShown && filteredTasks.length > 0) {
                 const firstTaskTime24 = convertTo24Hour(filteredTasks[0].Time || '00:00 AM');
                 if (firstTaskTime24 > currentTime24) {
-                    tasksHTML = `<div class="current-time-indicator" data-time="📍 Current Time: ${now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}"></div>` + tasksHTML;
+                    const animClass = ENABLE_ANIMATIONS ? '' : ' no-animation';
+                    tasksHTML = `<div class="current-time-indicator${animClass}" data-time="📍 Current Time: ${now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })}"></div>` + tasksHTML;
                     timeIndicatorShown = true;
                 }
             }
@@ -2059,7 +2093,8 @@
             if (isToday && !timeIndicatorShown && filteredTasks.length > 0) {
                 const lastTaskTime24 = convertTo24Hour(filteredTasks[filteredTasks.length - 1].Time || '00:00 AM');
                 if (lastTaskTime24 < currentTime24) {
-                    tasksHTML += `<div class="current-time-indicator" data-time="📍 Current Time: ${now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}"></div>`;
+                    const animClass = ENABLE_ANIMATIONS ? '' : ' no-animation';
+                    tasksHTML += `<div class="current-time-indicator${animClass}" data-time="📍 Current Time: ${now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })}"></div>`;
                 }
             }
 
@@ -2267,8 +2302,15 @@
                 const scrollPosition = indicatorPosition - (windowHeight / 2);
 
                 // Mark as programmatic scroll to prevent triggering user scroll detection
+                isProgrammaticScroll = true;
                 isUserScrolling = false;
                 window.scrollTo({ top: scrollPosition, behavior: smooth ? 'smooth' : 'auto' });
+
+                // Clear programmatic flag after animation completes (smooth scroll takes ~500ms)
+                setTimeout(() => {
+                    isProgrammaticScroll = false;
+                }, smooth ? 600 : 100);
+
                 return true;
             }
             return false;
@@ -2303,8 +2345,15 @@
             if (isAtCurrentTime) {
                 // Go to top of page and stop auto-follow
                 stopAutoFollow();
-                isUserScrolling = false; // Mark as programmatic scroll
+                isProgrammaticScroll = true;
+                isUserScrolling = false;
                 window.scrollTo({ top: 0, behavior: 'smooth' });
+
+                // Clear programmatic flag after animation completes
+                setTimeout(() => {
+                    isProgrammaticScroll = false;
+                }, 600);
+
                 floatingAnchor.classList.remove('at-current');
                 anchorIcon.textContent = '🕐';
                 anchorTooltip.textContent = 'Go to current time';
@@ -2313,7 +2362,7 @@
                 // Find the current time indicator line (always exists)
                 if (scrollToCurrentTime(true)) {
                     floatingAnchor.classList.add('at-current');
-                    anchorIcon.textContent = '▲';
+                    anchorIcon.textContent = '⬆';
                     anchorTooltip.textContent = 'Go to top';
                     isAtCurrentTime = true;
 
@@ -2329,10 +2378,13 @@
         // Reset the floating anchor state when user manually scrolls
         let scrollTimeout;
         let isUserScrolling = false;
+        let isProgrammaticScroll = false;
 
         window.addEventListener('scroll', function(e) {
-            // Mark that user is scrolling
-            isUserScrolling = true;
+            // Only mark as user scrolling if it's not a programmatic scroll
+            if (!isProgrammaticScroll) {
+                isUserScrolling = true;
+            }
 
             clearTimeout(scrollTimeout);
             scrollTimeout = setTimeout(function() {
@@ -2341,7 +2393,18 @@
                 if (currentIndicator && isAtCurrentTime) {
                     const indicatorRect = currentIndicator.getBoundingClientRect();
                     const windowHeight = window.innerHeight;
-                    const isInCenter = indicatorRect.top < windowHeight * 0.6 && indicatorRect.bottom > windowHeight * 0.4;
+
+                    // Check if indicator is in the center zone (40%-60% of viewport)
+                    const isInCenterZone = indicatorRect.top < windowHeight * 0.6 && indicatorRect.bottom > windowHeight * 0.4;
+
+                    // Check if we're at the bottom of the page (can't scroll further)
+                    const isAtBottom = (window.scrollY + window.innerHeight) >= (document.documentElement.scrollHeight - 10);
+
+                    // Check if indicator is visible and below mid-screen
+                    const isBelowMid = indicatorRect.top > windowHeight * 0.5 && indicatorRect.top < windowHeight;
+
+                    // Treat as centered if: actually centered, OR at bottom with indicator visible below mid-screen
+                    const isInCenter = isInCenterZone || (isAtBottom && isBelowMid);
 
                     if (!isInCenter && isUserScrolling) {
                         // User manually scrolled away, reset state and stop auto-follow
@@ -2870,6 +2933,17 @@
 
         // Initialize
         window.addEventListener('DOMContentLoaded', function() {
+            // Apply animation interval settings dynamically
+            if (ANIMATION_INTERVAL !== '10s') {
+                const style = document.createElement('style');
+                style.textContent = `
+                    .current-time-indicator { animation-duration: ${ANIMATION_INTERVAL} !important; }
+                    .current-time-indicator::before { animation-duration: ${ANIMATION_INTERVAL} !important; }
+                    .task-card.current { animation-duration: ${ANIMATION_INTERVAL} !important; }
+                `;
+                document.head.appendChild(style);
+            }
+
             // Always set date to today on page load (prevents browser cache issues)
             const today = getLocalDateString();
             const dateInput = document.getElementById('dateFilter');
@@ -2954,7 +3028,7 @@
                 if (currentFilterDate) {
                     applyFilters();
                 }
-            }, 60000);
+            }, 1000);
         });
 
         // Clean up intervals on page unload
