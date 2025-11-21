@@ -1531,7 +1531,6 @@
                         <option value="pending">Pending</option>
                         <option value="in-progress">In Progress</option>
                         <option value="completed">Completed</option>
-                        <option value="cancelled">Cancelled</option>
                     </select>
                 </div>
             </div>
@@ -1710,12 +1709,6 @@
                                     </span>
                                     <span class="metric-value" id="metricStatusCompleted">0</span>
                                 </div>
-                                <div class="metric-row">
-                                    <span class="metric-label">
-                                        <span class="status-badge cancelled">❌ Cancelled</span>
-                                    </span>
-                                    <span class="metric-value" id="metricStatusCancelled">0</span>
-                                </div>
                             </div>
                         </div>
 
@@ -1739,7 +1732,6 @@
                                         <th>⏳ Pending</th>
                                         <th>🔄 In Progress</th>
                                         <th>✅ Completed</th>
-                                        <th>❌ Cancelled</th>
                                         <th>Total</th>
                                     </tr>
                                 </thead>
@@ -1749,7 +1741,6 @@
                                         <td id="matrix-high-pending">0</td>
                                         <td id="matrix-high-progress">0</td>
                                         <td id="matrix-high-completed">0</td>
-                                        <td id="matrix-high-cancelled">0</td>
                                         <td id="matrix-high-total">0</td>
                                     </tr>
                                     <tr>
@@ -1757,7 +1748,6 @@
                                         <td id="matrix-medium-pending">0</td>
                                         <td id="matrix-medium-progress">0</td>
                                         <td id="matrix-medium-completed">0</td>
-                                        <td id="matrix-medium-cancelled">0</td>
                                         <td id="matrix-medium-total">0</td>
                                     </tr>
                                     <tr>
@@ -1765,7 +1755,6 @@
                                         <td id="matrix-low-pending">0</td>
                                         <td id="matrix-low-progress">0</td>
                                         <td id="matrix-low-completed">0</td>
-                                        <td id="matrix-low-cancelled">0</td>
                                         <td id="matrix-low-total">0</td>
                                     </tr>
                                 </tbody>
@@ -2192,7 +2181,7 @@
                     const priority = (task.Priority || 'low').toLowerCase();
                     const status = (task.Status || 'pending').toLowerCase().replace(' ', '-');
                     const description = `<div class="task-description">${task.Description || ''}</div>`;
-                    const statusOptions = ['Pending', 'In Progress', 'Completed', 'Cancelled'];
+                    const statusOptions = ['Pending', 'In Progress', 'Completed'];
                     const currentStatus = task.Status || 'Pending';
                     const assignedTo = task.Assigned || 'Unassigned';
                     const isAllTeam = assignedTo.toLowerCase() === 'everyone';
@@ -2284,7 +2273,7 @@
                         timedTasksHTML += `<div class="current-time-indicator${animClass}" data-time="📍 Current Time: ${now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })}"></div>`;
                     }
 
-                    const statusOptions = ['Pending', 'In Progress', 'Completed', 'Cancelled'];
+                    const statusOptions = ['Pending', 'In Progress', 'Completed'];
                     const currentStatus = task.Status || 'Pending';
                     const assignedTo = task.Assigned || 'Unassigned';
                     const isAllTeam = assignedTo.toLowerCase() === 'everyone';
@@ -2380,12 +2369,10 @@
             const pending = tasks.filter(t => t.Status?.toLowerCase() === 'pending').length;
             const inProgress = tasks.filter(t => t.Status?.toLowerCase() === 'in progress').length;
             const completed = tasks.filter(t => t.Status?.toLowerCase() === 'completed').length;
-            const cancelled = tasks.filter(t => t.Status?.toLowerCase() === 'cancelled').length;
 
             document.getElementById('metricStatusPending').textContent = pending;
             document.getElementById('metricStatusProgress').textContent = inProgress;
             document.getElementById('metricStatusCompleted').textContent = completed;
-            document.getElementById('metricStatusCancelled').textContent = cancelled;
 
             // Employee metrics
             const employeeCounts = {};
@@ -2406,19 +2393,18 @@
 
             // Priority × Status Matrix
             const matrix = {
-                high: { pending: 0, progress: 0, completed: 0, cancelled: 0 },
-                medium: { pending: 0, progress: 0, completed: 0, cancelled: 0 },
-                low: { pending: 0, progress: 0, completed: 0, cancelled: 0 }
+                high: { pending: 0, progress: 0, completed: 0 },
+                medium: { pending: 0, progress: 0, completed: 0 },
+                low: { pending: 0, progress: 0, completed: 0 }
             };
 
             tasks.forEach(task => {
                 const priority = (task.Priority || 'low').toLowerCase();
                 const status = task.Status?.toLowerCase() || 'pending';
-                
+
                 if (status === 'pending') matrix[priority].pending++;
                 else if (status === 'in progress') matrix[priority].progress++;
                 else if (status === 'completed') matrix[priority].completed++;
-                else if (status === 'cancelled') matrix[priority].cancelled++;
             });
 
             // Update matrix cells
@@ -2426,10 +2412,9 @@
                 document.getElementById(`matrix-${priority}-pending`).textContent = matrix[priority].pending;
                 document.getElementById(`matrix-${priority}-progress`).textContent = matrix[priority].progress;
                 document.getElementById(`matrix-${priority}-completed`).textContent = matrix[priority].completed;
-                document.getElementById(`matrix-${priority}-cancelled`).textContent = matrix[priority].cancelled;
-                
-                const total = matrix[priority].pending + matrix[priority].progress + 
-                             matrix[priority].completed + matrix[priority].cancelled;
+
+                const total = matrix[priority].pending + matrix[priority].progress +
+                             matrix[priority].completed;
                 document.getElementById(`matrix-${priority}-total`).textContent = total;
             });
         }
@@ -2736,7 +2721,6 @@
             const pending = allTasks.filter(t => t.Status?.toLowerCase() === 'pending').length;
             const inProgress = allTasks.filter(t => t.Status?.toLowerCase() === 'in progress').length;
             const completed = allTasks.filter(t => t.Status?.toLowerCase() === 'completed').length;
-            const cancelled = allTasks.filter(t => t.Status?.toLowerCase() === 'cancelled').length;
 
             // Employee metrics
             const employeeCounts = {};
@@ -2748,9 +2732,9 @@
 
             // Priority × Status Matrix
             const matrix = {
-                high: { pending: 0, progress: 0, completed: 0, cancelled: 0 },
-                medium: { pending: 0, progress: 0, completed: 0, cancelled: 0 },
-                low: { pending: 0, progress: 0, completed: 0, cancelled: 0 }
+                high: { pending: 0, progress: 0, completed: 0 },
+                medium: { pending: 0, progress: 0, completed: 0 },
+                low: { pending: 0, progress: 0, completed: 0 }
             };
 
             allTasks.forEach(task => {
@@ -2760,7 +2744,6 @@
                 if (status === 'pending') matrix[priority].pending++;
                 else if (status === 'in progress') matrix[priority].progress++;
                 else if (status === 'completed') matrix[priority].completed++;
-                else if (status === 'cancelled') matrix[priority].cancelled++;
             });
 
             // Create workbook with ExcelJS
@@ -2846,8 +2829,7 @@
             const statusData = [
                 ['⏳ Pending', pending, 'FFFFC000'],
                 ['🔄 In Progress', inProgress, 'FF17A2B8'],
-                ['✅ Completed', completed, 'FF00B050'],
-                ['❌ Cancelled', cancelled, 'FF6C757D']
+                ['✅ Completed', completed, 'FF00B050']
             ];
             statusData.forEach(([label, count, color]) => {
                 worksheet.getRow(currentRow).values = [label, count];
@@ -2856,7 +2838,7 @@
                 worksheet.getCell(`B${currentRow}`).style = centerAlign;
                 currentRow++;
             });
-            worksheet.getRow(currentRow).values = ['Total', pending + inProgress + completed + cancelled];
+            worksheet.getRow(currentRow).values = ['Total', pending + inProgress + completed];
             worksheet.getRow(currentRow).eachCell(cell => cell.style = totalStyle);
             worksheet.getCell(`B${currentRow}`).style = { ...totalStyle, alignment: { horizontal: 'center' } };
             currentRow += 2;
@@ -2883,28 +2865,28 @@
             worksheet.getCell(`A${currentRow}`).value = '🎯 PRIORITY × STATUS MATRIX';
             worksheet.getCell(`A${currentRow}`).style = sectionHeaderStyle;
             currentRow += 2;
-            worksheet.getRow(currentRow).values = ['Priority', '⏳ Pending', '🔄 In Progress', '✅ Completed', '❌ Cancelled', 'Total'];
+            worksheet.getRow(currentRow).values = ['Priority', '⏳ Pending', '🔄 In Progress', '✅ Completed', 'Total'];
             worksheet.getRow(currentRow).eachCell(cell => cell.style = headerStyle);
             currentRow++;
 
             const matrixData = [
-                ['🔴 High', matrix.high.pending, matrix.high.progress, matrix.high.completed, matrix.high.cancelled, 'FFFF0000'],
-                ['🟡 Medium', matrix.medium.pending, matrix.medium.progress, matrix.medium.completed, matrix.medium.cancelled, 'FFFFA500'],
-                ['🟢 Low', matrix.low.pending, matrix.low.progress, matrix.low.completed, matrix.low.cancelled, 'FF00B050']
+                ['🔴 High', matrix.high.pending, matrix.high.progress, matrix.high.completed, 'FFFF0000'],
+                ['🟡 Medium', matrix.medium.pending, matrix.medium.progress, matrix.medium.completed, 'FFFFA500'],
+                ['🟢 Low', matrix.low.pending, matrix.low.progress, matrix.low.completed, 'FF00B050']
             ];
-            matrixData.forEach(([label, pend, prog, comp, canc, color]) => {
-                const total = pend + prog + comp + canc;
-                worksheet.getRow(currentRow).values = [label, pend, prog, comp, canc, total];
+            matrixData.forEach(([label, pend, prog, comp, color]) => {
+                const total = pend + prog + comp;
+                worksheet.getRow(currentRow).values = [label, pend, prog, comp, total];
                 worksheet.getCell(`A${currentRow}`).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: color } };
                 worksheet.getCell(`A${currentRow}`).font = { bold: true, color: { argb: 'FFFFFFFF' } };
-                for (let col = 2; col <= 6; col++) {
+                for (let col = 2; col <= 5; col++) {
                     worksheet.getCell(currentRow, col).style = centerAlign;
                 }
                 currentRow++;
             });
-            worksheet.getRow(currentRow).values = ['Total', pending, inProgress, completed, cancelled, allTasks.length];
+            worksheet.getRow(currentRow).values = ['Total', pending, inProgress, completed, allTasks.length];
             worksheet.getRow(currentRow).eachCell(cell => cell.style = totalStyle);
-            for (let col = 2; col <= 6; col++) {
+            for (let col = 2; col <= 5; col++) {
                 worksheet.getCell(currentRow, col).style = { ...totalStyle, alignment: { horizontal: 'center' } };
             }
             currentRow += 3;

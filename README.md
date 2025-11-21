@@ -13,7 +13,7 @@ Task Manager is a lightweight, browser-based task management system that combine
 - **🕐 Real-time Tracking** - Visual current time indicator with automatic task highlighting
 - **👥 Employee Management** - Assign tasks to team members with smart assignment features
 - **🎯 Priority System** - Three-level priority management (High, Medium, Low)
-- **✅ Status Tracking** - Four status states (Pending, In Progress, Completed, Cancelled)
+- **✅ Status Tracking** - Three status states (Pending, In Progress, Completed)
 - **🔍 Advanced Search** - Filter tasks by date, status, priority, employee, or custom criteria
 - **📈 Live Analytics** - Real-time metrics showing priority distribution, status breakdown, and employee workload
 - **💾 Auto-save** - Automatic local storage persistence
@@ -45,7 +45,7 @@ Contains all task data with the following columns:
 - **Description** - Detailed task description
 - **Priority** - High, Medium, or Low
 - **Assigned** - Employee name or "Everyone" for unassigned
-- **Status** - Pending, In Progress, Completed, or Cancelled
+- **Status** - Pending, In Progress, or Completed
 
 > **Note:** The first 2 rows are reserved for instructions/headers and are automatically skipped during import.
 
@@ -86,7 +86,7 @@ Quick task templates for frequently repeated tasks:
      - **Time**: Optional - leave blank for all-day tasks, or use h:mm AM/PM format
      - **Task**: Task title/name
      - **Priority**: High, Medium, or Low
-     - **Status**: Pending, In Progress, Completed, or Cancelled
+     - **Status**: Pending, In Progress, or Completed
      - **Assigned**: Employee name or "Everyone"
      - **Description**: Optional details
 
@@ -144,7 +144,7 @@ Quick task templates for frequently repeated tasks:
 1. Click **"🔍 Search"** button
 2. Enter filter criteria:
    - **Employee name** - Show tasks for specific person
-   - **Status** - Filter by Pending, In Progress, Completed, Cancelled
+   - **Status** - Filter by Pending, In Progress, or Completed
    - **Priority** - Filter by High, Medium, Low
    - **Date** - Select specific date from date picker
 3. Click **"Search"** to apply
@@ -212,7 +212,7 @@ The application provides real-time metrics:
 - Color-coded cards (Red, Orange, Green)
 
 ### Status Breakdown
-- Tasks by status (Pending, In Progress, Completed, Cancelled)
+- Tasks by status (Pending, In Progress, Completed)
 - Percentage distribution
 
 ### Tasks by Employee
