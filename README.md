@@ -9,6 +9,7 @@ Task Manager is a lightweight, browser-based task management system that combine
 ### Key Features
 
 - **📊 Excel Integration** - Import/export tasks seamlessly with Excel files
+- **📅 All-Day Tasks** - Tasks without time automatically display as all-day tasks in a sticky section
 - **🕐 Real-time Tracking** - Visual current time indicator with automatic task highlighting
 - **👥 Employee Management** - Assign tasks to team members with smart assignment features
 - **🎯 Priority System** - Three-level priority management (High, Medium, Low)
@@ -39,7 +40,7 @@ The Excel template/database file with three sheets:
 #### **Tasks Sheet**
 Contains all task data with the following columns:
 - **Date** - Task date in MM-DD-YYYY format
-- **Time** - Task time in h:mm AM/PM format
+- **Time** - Task time in h:mm AM/PM format (leave blank for all-day tasks)
 - **Task** - Task title/name
 - **Description** - Detailed task description
 - **Priority** - High, Medium, or Low
@@ -47,6 +48,8 @@ Contains all task data with the following columns:
 - **Status** - Pending, In Progress, Completed, or Cancelled
 
 > **Note:** The first 2 rows are reserved for instructions/headers and are automatically skipped during import.
+
+> **All-Day Tasks:** Leave the Time column blank for tasks that span the entire day. These tasks will appear in a special sticky section at the top of the view, sorted by priority.
 
 #### **Employees Sheet**
 Lists all team members:
@@ -109,6 +112,14 @@ Quick task templates for frequently repeated tasks:
 3. Re-import the modified file
 
 ### Managing Tasks
+
+#### **All-Day Tasks**
+- Leave the Time column blank in Excel to create all-day tasks
+- All-day tasks appear in a sticky blue-bordered section at the top
+- Displayed as horizontal cards (3 per row)
+- Automatically sorted by priority: High → Medium → Low
+- Remain visible while scrolling through timed tasks
+- Perfect for deadlines, reminders, or tasks without specific times
 
 #### **Assign Tasks**
 - Click on "Everyone ➡️" badge on any unassigned task
@@ -211,9 +222,17 @@ The application provides real-time metrics:
 - ✅ Keep the Database.xlsx file as your master copy
 - ✅ Export regularly to back up your tasks
 - ✅ Use consistent date format (MM-DD-YYYY)
-- ✅ Use consistent time format (h:mm AM/PM)
+- ✅ Use consistent time format (h:mm AM/PM for timed tasks)
+- ✅ Leave Time column blank for all-day tasks
 - ⚠️ Don't delete sheet names (Tasks, Employees, TaskTemplates)
 - ⚠️ Don't modify column headers in the Tasks sheet
+
+### All-Day Tasks Best Practices
+- Use all-day tasks for deadlines without specific times
+- Leave Time blank for full-day events or reminders
+- High priority all-day tasks appear first in the sticky section
+- All-day tasks won't trigger current/past time indicators
+- Perfect for daily goals, milestones, or flexible deadlines
 
 ### Task Assignment
 - Use "Everyone" for tasks that can be picked up by anyone
@@ -304,5 +323,7 @@ If you encounter issues or have questions:
 ---
 
 **Made with ❤️ for efficient task management**
+
 **Changes to locked cells might make Database unreadable by HTML file**
+
 **In case you want to modify them the password is "DROWSSAP"**

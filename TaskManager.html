@@ -704,6 +704,80 @@
             font-weight: 600;
         }
 
+        .task-time.all-day {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .all-day-tasks-section {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: white;
+            padding: 15px;
+            margin: -15px -15px 20px -15px;
+            border: 3px solid #667eea;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.4), 0 4px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .all-day-header {
+            font-size: 1.2em;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .all-day-tasks-container {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: stretch;
+        }
+
+        .task-card.all-day {
+            flex: 0 1 calc(33.333% - 10px);
+            min-width: 250px;
+            max-width: 350px;
+            margin-bottom: 0;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .task-card.all-day > div {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            justify-content: flex-start;
+        }
+
+        .task-card.all-day .task-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .task-card.all-day .task-title {
+            font-size: 0.95em;
+        }
+
+        .task-card.all-day .task-description {
+            font-size: 0.85em;
+            min-height: 40px;
+            max-height: 60px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            flex-shrink: 0;
+        }
+
         .task-meta {
             display: flex;
             gap: 15px;
@@ -882,8 +956,8 @@
             position: fixed;
             bottom: 30px;
             right: 30px;
-            width: 50px;
-            height: 50px;
+            width: 60px;
+            height: 60px;
             background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
             border-radius: 50%;
             display: flex;
@@ -906,21 +980,21 @@
         }
 
         .floating-anchor-icon {
-            font-size: 2.2em;
+            font-size: 2em;
             line-height: 1;
-            font-weight: 900;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            display: block;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
         }
 
         .floating-anchor.at-current .floating-anchor-icon {
             font-weight: 900;
-        }
-
-        /* Make the up arrow white when shown */
-        .floating-anchor.at-current .floating-anchor-icon {
+            font-size: 2.5em;
             color: white;
+            margin-top: -3px; /* Visual centering adjustment for arrow character */
         }
 
         .floating-anchor.at-current {
@@ -947,14 +1021,18 @@
 
         @media (max-width: 768px) {
             .floating-anchor {
-                width: 45px;
-                height: 45px;
+                width: 50px;
+                height: 50px;
                 bottom: 20px;
                 right: 20px;
             }
 
             .floating-anchor-icon {
-                font-size: 1.3em;
+                font-size: 1.6em;
+            }
+
+            .floating-anchor.at-current .floating-anchor-icon {
+                font-size: 2em;
             }
 
             .floating-anchor-tooltip {
@@ -1395,6 +1473,7 @@
 
             <div class="action-buttons">
                 <button class="btn btn-success" onclick="exportToExcel()">📊 Export to Excel</button>
+                <button class="btn btn-warning" onclick="exportForTV()" id="exportTVButton" style="display: none;">📺 Export for TV</button>
                 <a class="btn btn-info" href="https://github.com/MohsenUSA/TaskManager/raw/refs/heads/main/Database.xlsx" target="_blank">📥 Download Template</a>
                 <button class="btn btn-secondary" onclick="clearAllData()">🗑️ Clear Data</button>
                 <button class="btn btn-primary" id="searchResetButton" onclick="toggleSearchReset()">🔍 Search</button>
@@ -1936,11 +2015,27 @@
         }
 
         function displayTasks() {
-            filteredTasks.sort((a, b) => {
+            // Separate all-day tasks from timed tasks
+            const allDayTasks = filteredTasks.filter(task => task.isAllDay);
+            const timedTasks = filteredTasks.filter(task => !task.isAllDay);
+
+            // Sort all-day tasks by priority (High -> Medium -> Low)
+            const priorityOrder = { 'high': 1, 'medium': 2, 'low': 3 };
+            allDayTasks.sort((a, b) => {
+                const priorityA = priorityOrder[(a.Priority || 'low').toLowerCase()] || 3;
+                const priorityB = priorityOrder[(b.Priority || 'low').toLowerCase()] || 3;
+                return priorityA - priorityB;
+            });
+
+            // Sort timed tasks by time
+            timedTasks.sort((a, b) => {
                 const timeA = convertTo24Hour(a.Time || '00:00');
                 const timeB = convertTo24Hour(b.Time || '00:00');
                 return timeA.localeCompare(timeB);
             });
+
+            // Combine: all-day tasks first, then timed tasks
+            filteredTasks = [...allDayTasks, ...timedTasks];
 
             const allTasksForDate = allTasks.filter(task => task.normalizedDate === currentFilterDate);
             const stats = {
@@ -1983,122 +2078,182 @@
                 return;
             }
 
-            let tasksHTML = '';
+            let allDayTasksHTML = '';
+            let timedTasksHTML = '';
             let currentTaskFound = false;
             let timeIndicatorShown = false;
 
-            filteredTasks.forEach((task, index) => {
-                const priority = (task.Priority || 'low').toLowerCase();
-                const status = (task.Status || 'pending').toLowerCase().replace(' ', '-');
-                const description = task.Description ?
-                    `<div class="task-description">${task.Description}</div>` : '';
+            // Render All-Day Tasks Section
+            if (allDayTasks.length > 0) {
+                allDayTasksHTML = '<div class="all-day-tasks-section"><div class="all-day-header">📅 All-Day Tasks</div><div class="all-day-tasks-container">';
 
-                const taskTime = task.Time || '00:00 AM';
-                const taskTime24 = convertTo24Hour(taskTime);
+                allDayTasks.forEach((task) => {
+                    const priority = (task.Priority || 'low').toLowerCase();
+                    const status = (task.Status || 'pending').toLowerCase().replace(' ', '-');
+                    const description = `<div class="task-description">${task.Description || ''}</div>`;
+                    const statusOptions = ['Pending', 'In Progress', 'Completed', 'Cancelled'];
+                    const currentStatus = task.Status || 'Pending';
+                    const assignedTo = task.Assigned || 'Unassigned';
+                    const isAllTeam = assignedTo.toLowerCase() === 'everyone';
 
-                let taskClass = '';
-                let showIndicatorBefore = false;
-                let isCurrentTask = false;
-
-                if (isToday) {
-                    const [hours, minutes] = taskTime24.split(':').map(Number);
-                    const taskEndMinutes = hours * 60 + minutes + 30;
-                    const taskEndHours = Math.floor(taskEndMinutes / 60);
-                    const taskEndMins = taskEndMinutes % 60;
-                    const taskEndTime = `${String(taskEndHours).padStart(2, '0')}:${String(taskEndMins).padStart(2, '0')}`;
-
-                    if (taskTime24 < currentTime24 && taskEndTime < currentTime24) {
-                        taskClass = 'past';
-                    } else if (taskTime24 <= currentTime24 && currentTime24 <= taskEndTime) {
-                        taskClass = 'current';
-                        currentTaskFound = true;
-                        isCurrentTask = true;
-                        timeIndicatorShown = true;
-                    }
-
-                    // Show indicator before first future task if we haven't found current task
-                    if (!timeIndicatorShown && !currentTaskFound && taskTime24 > currentTime24) {
-                        showIndicatorBefore = true;
-                        timeIndicatorShown = true;
-                    }
-                }
-
-                // Add current time indicator BEFORE this task if needed
-                if (showIndicatorBefore && isToday) {
-                    const animClass = ENABLE_ANIMATIONS ? '' : ' no-animation';
-                    tasksHTML += `<div class="current-time-indicator${animClass}" data-time="📍 Current Time: ${now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })}"></div>`;
-                }
-
-                const statusOptions = ['Pending', 'In Progress', 'Completed', 'Cancelled'];
-                const currentStatus = task.Status || 'Pending';
-                const assignedTo = task.Assigned || 'Unassigned';
-                const isAllTeam = assignedTo.toLowerCase() === 'everyone';
-                const animClass = (!ENABLE_ANIMATIONS && taskClass === 'current') ? ' no-animation' : '';
-
-                tasksHTML += `
-                    <div class="task-card priority-${priority} status-${status} ${taskClass}${animClass}" ${isCurrentTask ? `data-current-time="Current Time: ${now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })}"` : ''} style="position: relative;">
-                        ${isCurrentTask ? `
-                            <div class="current-time-indicator${ENABLE_ANIMATIONS ? '' : ' no-animation'}" style="position: absolute; top: 50%; left: -20px; right: -20px; transform: translateY(-50%); margin: 0; z-index: 0;"></div>
-                        ` : ''}
-                        <div style="position: relative; z-index: 5; background: white; padding: 10px; margin: -10px;">
-                            <div class="task-header">
-                                <div class="task-title">${task.Task || 'Untitled Task'}</div>
-                                ${task.Time ? `<div class="task-time">🕐 ${task.Time}</div>` : ''}
-                            </div>
-                            <div class="task-meta">
-                                <div class="task-meta-item">
-                                    <span class="priority-badge ${priority}">
-                                        ${priority === 'high' ? '🔴' : priority === 'medium' ? '🟡' : '🟢'} 
-                                        ${task.Priority || 'Low'}
-                                    </span>
+                    allDayTasksHTML += `
+                        <div class="task-card all-day priority-${priority} status-${status}" style="position: relative;">
+                            <div style="position: relative; z-index: 5; background: white; padding: 10px; margin: -10px;">
+                                <div class="task-header">
+                                    <div class="task-title">${task.Task || 'Untitled Task'}</div>
                                 </div>
-                                <div class="status-selector">
-                                    <span class="status-badge ${status}" onclick="toggleStatusDropdown(event, '${task.id}')">
-                                        ${status === 'pending' ? '⏳' : status === 'in-progress' ? '🔄' : status === 'completed' ? '✅' : '❌'} 
-                                        ${currentStatus}
-                                    </span>
-                                    <div class="status-dropdown" id="dropdown-${task.id}">
-                                        ${statusOptions.map(opt => `
-                                            <div class="status-option" onclick="updateTaskStatus('${task.id}', '${opt}')">${opt}</div>
-                                        `).join('')}
-                                    </div>
-                                </div>
-                                ${task.Assigned ? `
+                                <div class="task-meta">
                                     <div class="task-meta-item">
-                                        <strong>👤</strong> 
-                                        ${isAllTeam ? 
-                                            `<span class="assignee-badge all-team" onclick="assignToMe(event, '${task.id}')" title="Click to assign to yourself">${assignedTo} ➡️</span>` :
-                                            `<span class="assignee-badge">${assignedTo}</span>`
-                                        }
+                                        <span class="priority-badge ${priority}">
+                                            ${priority === 'high' ? '🔴' : priority === 'medium' ? '🟡' : '🟢'}
+                                            ${task.Priority || 'Low'}
+                                        </span>
                                     </div>
-                                ` : ''}
+                                    <div class="status-selector">
+                                        <span class="status-badge ${status}" onclick="toggleStatusDropdown(event, '${task.id}')">
+                                            ${status === 'pending' ? '⏳' : status === 'in-progress' ? '🔄' : status === 'completed' ? '✅' : '❌'}
+                                            ${currentStatus}
+                                        </span>
+                                        <div class="status-dropdown" id="dropdown-${task.id}">
+                                            ${statusOptions.map(opt => `
+                                                <div class="status-option" onclick="updateTaskStatus('${task.id}', '${opt}')">${opt}</div>
+                                            `).join('')}
+                                        </div>
+                                    </div>
+                                    ${task.Assigned ? `
+                                        <div class="task-meta-item">
+                                            <strong>👤</strong>
+                                            ${isAllTeam ?
+                                                `<span class="assignee-badge all-team" onclick="assignToMe(event, '${task.id}')" title="Click to assign to yourself">${assignedTo} ➡️</span>` :
+                                                `<span class="assignee-badge">${assignedTo}</span>`
+                                            }
+                                        </div>
+                                    ` : ''}
+                                </div>
+                                ${description}
                             </div>
-                            ${description}
                         </div>
-                    </div>
-                `;
-            });
+                    `;
+                });
 
-            // If all tasks are in the future, show indicator at the top
-            if (isToday && !timeIndicatorShown && filteredTasks.length > 0) {
-                const firstTaskTime24 = convertTo24Hour(filteredTasks[0].Time || '00:00 AM');
-                if (firstTaskTime24 > currentTime24) {
-                    const animClass = ENABLE_ANIMATIONS ? '' : ' no-animation';
-                    tasksHTML = `<div class="current-time-indicator${animClass}" data-time="📍 Current Time: ${now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })}"></div>` + tasksHTML;
-                    timeIndicatorShown = true;
+                allDayTasksHTML += '</div></div>';
+            }
+
+            // Render Timed Tasks Section
+            if (timedTasks.length > 0) {
+                timedTasks.forEach((task, index) => {
+                    const priority = (task.Priority || 'low').toLowerCase();
+                    const status = (task.Status || 'pending').toLowerCase().replace(' ', '-');
+                    const description = task.Description ?
+                        `<div class="task-description">${task.Description}</div>` : '';
+
+                    const taskTime = task.Time || '00:00 AM';
+                    const taskTime24 = convertTo24Hour(taskTime);
+
+                    let taskClass = '';
+                    let showIndicatorBefore = false;
+                    let isCurrentTask = false;
+
+                    if (isToday) {
+                        const [hours, minutes] = taskTime24.split(':').map(Number);
+                        const taskEndMinutes = hours * 60 + minutes + 30;
+                        const taskEndHours = Math.floor(taskEndMinutes / 60);
+                        const taskEndMins = taskEndMinutes % 60;
+                        const taskEndTime = `${String(taskEndHours).padStart(2, '0')}:${String(taskEndMins).padStart(2, '0')}`;
+
+                        if (taskTime24 < currentTime24 && taskEndTime < currentTime24) {
+                            taskClass = 'past';
+                        } else if (taskTime24 <= currentTime24 && currentTime24 <= taskEndTime) {
+                            taskClass = 'current';
+                            currentTaskFound = true;
+                            isCurrentTask = true;
+                            timeIndicatorShown = true;
+                        }
+
+                        // Show indicator before first future task if we haven't found current task
+                        if (!timeIndicatorShown && !currentTaskFound && taskTime24 > currentTime24) {
+                            showIndicatorBefore = true;
+                            timeIndicatorShown = true;
+                        }
+                    }
+
+                    // Add current time indicator BEFORE this task if needed
+                    if (showIndicatorBefore && isToday) {
+                        const animClass = ENABLE_ANIMATIONS ? '' : ' no-animation';
+                        timedTasksHTML += `<div class="current-time-indicator${animClass}" data-time="📍 Current Time: ${now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })}"></div>`;
+                    }
+
+                    const statusOptions = ['Pending', 'In Progress', 'Completed', 'Cancelled'];
+                    const currentStatus = task.Status || 'Pending';
+                    const assignedTo = task.Assigned || 'Unassigned';
+                    const isAllTeam = assignedTo.toLowerCase() === 'everyone';
+                    const animClass = (!ENABLE_ANIMATIONS && taskClass === 'current') ? ' no-animation' : '';
+
+                    timedTasksHTML += `
+                        <div class="task-card priority-${priority} status-${status} ${taskClass}${animClass}" ${isCurrentTask ? `data-current-time="Current Time: ${now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })}"` : ''} style="position: relative;">
+                            ${isCurrentTask ? `
+                                <div class="current-time-indicator${ENABLE_ANIMATIONS ? '' : ' no-animation'}" style="position: absolute; top: 50%; left: -20px; right: -20px; transform: translateY(-50%); margin: 0; z-index: 0;"></div>
+                            ` : ''}
+                            <div style="position: relative; z-index: 5; background: white; padding: 10px; margin: -10px;">
+                                <div class="task-header">
+                                    <div class="task-title">${task.Task || 'Untitled Task'}</div>
+                                    <div class="task-time">🕐 ${task.Time}</div>
+                                </div>
+                                <div class="task-meta">
+                                    <div class="task-meta-item">
+                                        <span class="priority-badge ${priority}">
+                                            ${priority === 'high' ? '🔴' : priority === 'medium' ? '🟡' : '🟢'}
+                                            ${task.Priority || 'Low'}
+                                        </span>
+                                    </div>
+                                    <div class="status-selector">
+                                        <span class="status-badge ${status}" onclick="toggleStatusDropdown(event, '${task.id}')">
+                                            ${status === 'pending' ? '⏳' : status === 'in-progress' ? '🔄' : status === 'completed' ? '✅' : '❌'}
+                                            ${currentStatus}
+                                        </span>
+                                        <div class="status-dropdown" id="dropdown-${task.id}">
+                                            ${statusOptions.map(opt => `
+                                                <div class="status-option" onclick="updateTaskStatus('${task.id}', '${opt}')">${opt}</div>
+                                            `).join('')}
+                                        </div>
+                                    </div>
+                                    ${task.Assigned ? `
+                                        <div class="task-meta-item">
+                                            <strong>👤</strong>
+                                            ${isAllTeam ?
+                                                `<span class="assignee-badge all-team" onclick="assignToMe(event, '${task.id}')" title="Click to assign to yourself">${assignedTo} ➡️</span>` :
+                                                `<span class="assignee-badge">${assignedTo}</span>`
+                                            }
+                                        </div>
+                                    ` : ''}
+                                </div>
+                                ${description}
+                            </div>
+                        </div>
+                    `;
+                });
+
+                // If all timed tasks are in the future, show indicator at the top
+                if (isToday && !timeIndicatorShown && timedTasks.length > 0) {
+                    const firstTaskTime24 = convertTo24Hour(timedTasks[0].Time || '00:00 AM');
+                    if (firstTaskTime24 > currentTime24) {
+                        const animClass = ENABLE_ANIMATIONS ? '' : ' no-animation';
+                        timedTasksHTML = `<div class="current-time-indicator${animClass}" data-time="📍 Current Time: ${now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })}"></div>` + timedTasksHTML;
+                        timeIndicatorShown = true;
+                    }
+                }
+
+                // If all timed tasks are in the past, show indicator at the bottom
+                if (isToday && !timeIndicatorShown && timedTasks.length > 0) {
+                    const lastTaskTime24 = convertTo24Hour(timedTasks[timedTasks.length - 1].Time || '00:00 AM');
+                    if (lastTaskTime24 < currentTime24) {
+                        const animClass = ENABLE_ANIMATIONS ? '' : ' no-animation';
+                        timedTasksHTML += `<div class="current-time-indicator${animClass}" data-time="📍 Current Time: ${now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })}"></div>`;
+                    }
                 }
             }
 
-            // If all tasks are in the past, show indicator at the bottom
-            if (isToday && !timeIndicatorShown && filteredTasks.length > 0) {
-                const lastTaskTime24 = convertTo24Hour(filteredTasks[filteredTasks.length - 1].Time || '00:00 AM');
-                if (lastTaskTime24 < currentTime24) {
-                    const animClass = ENABLE_ANIMATIONS ? '' : ' no-animation';
-                    tasksHTML += `<div class="current-time-indicator${animClass}" data-time="📍 Current Time: ${now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })}"></div>`;
-                }
-            }
-
-            tasksList.innerHTML = tasksHTML;
+            tasksList.innerHTML = allDayTasksHTML + timedTasksHTML;
         }
 
         function updateMetrics(tasks) {
@@ -2678,6 +2833,85 @@
             showSuccessMessage('Excel report exported with professional formatting!');
         }
 
+        function exportForTV() {
+            if (allTasks.length === 0) {
+                alert('No tasks loaded! Please import an Excel file first.');
+                return;
+            }
+
+            try {
+                // Get the current document HTML
+                const doctype = '<!DOCTYPE html>\n';
+                const htmlClone = document.documentElement.cloneNode(true);
+
+                // Create a script element with embedded data
+                const scriptEl = document.createElement('script');
+                scriptEl.id = 'embedded-tv-data';
+                scriptEl.textContent = `
+        // ============================================
+        // EMBEDDED DATA FOR STANDALONE TV MODE
+        // This script runs immediately to pre-load data into localStorage
+        // ============================================
+        (function() {
+            const EMBEDDED_TASKS = ${JSON.stringify(allTasks)};
+            const EMBEDDED_EMPLOYEES = ${JSON.stringify(employees)};
+            const EMBEDDED_TEMPLATES = ${JSON.stringify(taskTemplates)};
+
+            // Immediately save to localStorage so the main app loads it
+            const data = {
+                tasks: EMBEDDED_TASKS,
+                templates: EMBEDDED_TEMPLATES,
+                employees: EMBEDDED_EMPLOYEES
+            };
+            localStorage.setItem('excelTaskCalendarFullDay', JSON.stringify(data));
+            console.log('📺 TV Mode: Pre-loaded', EMBEDDED_TASKS.length, 'tasks into localStorage');
+        })();
+        // ============================================
+`;
+
+                // Insert the script into the cloned head
+                const headEl = htmlClone.querySelector('head');
+                headEl.insertBefore(scriptEl, headEl.firstChild);
+
+                // Get the modified HTML
+                let modifiedHTML = doctype + htmlClone.outerHTML;
+
+                // Hide the "Export for TV" button in the standalone version
+                modifiedHTML = modifiedHTML.replace(
+                    'id="exportTVButton"',
+                    'id="exportTVButton" style="display: none !important;"'
+                );
+
+                // Hide the file upload area in standalone mode
+                modifiedHTML = modifiedHTML.replace(
+                    'class="file-upload-area"',
+                    'class="file-upload-area" style="display: none !important;"'
+                );
+
+                // Add a banner indicating this is a TV standalone version
+                const tvBanner = `
+            <div style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; padding: 15px; text-align: center; font-weight: bold; font-size: 1.1em;">
+                📺 TV Standalone Mode - Data Embedded | ${allTasks.length} Tasks Loaded
+            </div>
+`;
+                modifiedHTML = modifiedHTML.replace('<div class="container">', '<div class="container">' + tvBanner);
+
+                // Create and download the file
+                const blob = new Blob([modifiedHTML], { type: 'text/html;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `TaskManager-TV-Standalone-${allTasks.length}Tasks-${formatDateForCSV(getLocalDateString())}.html`;
+                a.click();
+                URL.revokeObjectURL(url);
+
+                showSuccessMessage(`TV Standalone file created with ${allTasks.length} tasks! Copy to flash drive for your Smart TV.`);
+            } catch (error) {
+                console.error('Export error:', error);
+                alert('Error creating TV standalone file: ' + error.message);
+            }
+        }
+
         function downloadTemplate() {
             // TODO: Replace this URL with your actual GitHub raw file URL
             // Example: https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/Database.xlsx
@@ -2814,13 +3048,17 @@
                         // Filter out empty rows - must have at least a Date or Task
                         allTasks = tasksData
                             .filter(task => task.Date || task.Task)
-                            .map((task, index) => ({
-                                ...task,
-                                id: task.id || `task_${Date.now()}_${index}`,
-                                normalizedDate: normalizeDate(task.Date),
-                                Time: normalizeTime(task.Time),
-                                Status: task.Status || 'Pending'
-                            }));
+                            .map((task, index) => {
+                                const normalizedTime = normalizeTime(task.Time);
+                                return {
+                                    ...task,
+                                    id: task.id || `task_${Date.now()}_${index}`,
+                                    normalizedDate: normalizeDate(task.Date),
+                                    Time: normalizedTime,
+                                    isAllDay: !normalizedTime || normalizedTime === null,
+                                    Status: task.Status || 'Pending'
+                                };
+                            });
                     }
 
                     if (workbook.SheetNames.includes('TaskTemplates')) {
@@ -2857,6 +3095,9 @@
                     } else {
                         showSuccessMessage(`File loaded: ${file.name} - ${allTasks.length} tasks imported. Click a date chip below the date picker to view tasks.`);
                     }
+
+                    // Show the "Export for TV" button after data is loaded
+                    document.getElementById('exportTVButton').style.display = 'inline-flex';
 
                     // Clear the file input value to prevent re-triggering and allow same file re-upload
                     fileInput.value = '';
@@ -2999,6 +3240,12 @@
                     createDemoData();
                     saveToLocalStorage();
                 }
+
+                // Show "Export for TV" button if there's data loaded
+                if (allTasks.length > 0) {
+                    document.getElementById('exportTVButton').style.display = 'inline-flex';
+                }
+
                 updateAvailableDates();
 
                 // Apply filters to show today's tasks
