@@ -277,6 +277,15 @@
             background: #e0a800;
         }
 
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
         .action-buttons {
             display: flex;
             gap: 10px;
@@ -1475,7 +1484,7 @@
                 <button class="btn btn-success" onclick="exportToExcel()">📊 Export to Excel</button>
                 <button class="btn btn-warning" onclick="exportForTV()" id="exportTVButton" style="display: none;">📺 Export for TV</button>
                 <a class="btn btn-info" href="https://github.com/MohsenUSA/TaskManager/raw/refs/heads/main/Database.xlsx" target="_blank">📥 Download Template</a>
-                <button class="btn btn-secondary" onclick="clearAllData()">🗑️ Clear Data</button>
+                <button class="btn btn-danger" onclick="clearAllData()">🗑️ Clear Data</button>
                 <button class="btn btn-primary" id="searchResetButton" onclick="toggleSearchReset()">🔍 Search</button>
             </div>
         </div>
@@ -1491,43 +1500,41 @@
 
                     <p><strong>📥 Getting Started:</strong></p>
                     <ul>
-                        <li>📁 <strong>Upload Excel File</strong> - Click or drag & drop your .xlsx file above</li>
-                        <li>📥 <strong>Download Template</strong> - Get a sample Excel file with the correct format</li>
-                        <li>📅 <strong>View Tasks</strong> - Date picker automatically shows today's tasks</li>
+                        <li>📥 <strong>Download Template</strong> - Click the button above to get Database.xlsx</li>
+                        <li>✏️ <strong>Add Your Data</strong> - Fill in Tasks, Employees, and TaskTemplates sheets</li>
+                        <li>📁 <strong>Upload File</strong> - Drag & drop your Excel file into the upload area above</li>
+                        <li>✨ <strong>Start Managing</strong> - Tasks load instantly and auto-save to your browser</li>
                     </ul>
 
                     <p><strong>✨ Key Features:</strong></p>
                     <ul>
-                        <li>🕐 <strong>Real-time Tracking</strong> - Current tasks highlighted with time indicator</li>
-                        <li>👥 <strong>Smart Assignment</strong> - Click "Everyone ➡️" to assign tasks to employees</li>
-                        <li>✅ <strong>Update Status</strong> - Click status badges to change task progress</li>
-                        <li>🔍 <strong>Search & Filter</strong> - Enter criteria and click Search button to filter</li>
-                        <li>📊 <strong>Live Metrics</strong> - View priority, status, and employee breakdowns</li>
-                        <li>🎯 <strong>Priority Matrix</strong> - Analyze tasks by priority × status combinations</li>
+                        <li>📅 <strong>All-Day Tasks</strong> - Leave Time blank for tasks that span the entire day (appear in sticky blue section at top)</li>
+                        <li>🕐 <strong>Timed Tasks</strong> - Add specific times for scheduled activities (sorted chronologically below all-day tasks)</li>
+                        <li>📍 <strong>Real-time Indicator</strong> - Red line shows current time position with automatic highlighting</li>
+                        <li>👥 <strong>Smart Assignment</strong> - Click "Everyone ➡️" to assign tasks to team members</li>
+                        <li>✅ <strong>Quick Status Updates</strong> - Click any status badge to change task progress</li>
+                        <li>🔍 <strong>Advanced Search</strong> - Filter by employee, status, priority, or custom text</li>
+                        <li>📊 <strong>Live Analytics</strong> - Real-time metrics and priority × status breakdowns</li>
                     </ul>
 
-                    <p><strong>📤 Export Features:</strong></p>
+                    <p><strong>📋 Excel File Structure:</strong></p>
                     <ul>
-                        <li>📊 <strong>Professional Excel Reports</strong> - Color-coded priorities and statuses</li>
-                        <li>🎨 <strong>Formatted Output</strong> - Bold headers, centered numbers, total rows</li>
-                        <li>📋 <strong>All-in-One Sheet</strong> - Summary, metrics, matrix, and task details</li>
-                        <li>🔍 <strong>Auto-Filter</strong> - Click column headers to sort and filter in Excel</li>
-                    </ul>
-
-                    <p><strong>📋 Excel File Requirements:</strong></p>
-                    <ul>
-                        <li><strong>Tasks Sheet:</strong> Date (MM-DD-YYYY), Time (h:mm AM/PM), Task, Description, Priority (High/Medium/Low), Assigned, Status (Pending/In Progress/Completed/Cancelled)</li>
-                        <li><strong>TaskTemplates Sheet:</strong> TaskName, Description (for quick task creation)</li>
-                        <li><strong>Employees Sheet:</strong> Name (list of team members for assignment)</li>
-                        <li><strong>Note:</strong> First 2 rows in Tasks sheet are skipped (for instructions)</li>
+                        <li><strong>Tasks Sheet:</strong> Date (MM-DD-YYYY), Time (h:mm AM/PM or blank for all-day), Task, Description, Priority (High/Medium/Low), Assigned, Status</li>
+                        <li><strong>Employees Sheet:</strong> Name (team member list for assignments)</li>
+                        <li><strong>TaskTemplates Sheet:</strong> TaskName, Description (optional - for reusable templates)</li>
+                        <li><strong>Note:</strong> First 2 rows in Tasks sheet are automatically skipped (reserved for instructions)</li>
                     </ul>
 
                     <p><strong>💡 Pro Tips:</strong></p>
                     <ul>
-                        <li>Use Data Validation in Excel for Priority (High/Medium/Low) and Status dropdowns</li>
-                        <li>Set Time column to h:mm AM/PM format with 30-minute intervals</li>
-                        <li>Changes made in the app can be exported back to Excel</li>
-                        <li>The app works in any timezone - dates are automatically localized</li>
+                        <li><strong>All-Day Tasks:</strong> Perfect for deadlines, reminders, or flexible tasks - just leave Time column blank</li>
+                        <li><strong>Priority Sorting:</strong> All-day tasks automatically sort by priority (High → Medium → Low)</li>
+                        <li><strong>Date Navigation:</strong> Click date chips at top to quickly jump between dates</li>
+                        <li><strong>Floating Clock Button:</strong> Click 🕐 to scroll to current time, click ⬆ to return to top</li>
+                        <li><strong>Auto-Save:</strong> All status changes save automatically to browser storage</li>
+                        <li><strong>Export to Excel:</strong> Click "📊 Export to Excel" to download updated tasks with metrics</li>
+                        <li><strong>Export for TV:</strong> Click "📺 Export for TV" (appears after loading data) to create a standalone HTML file with tasks embedded - perfect for TV displays, kiosks, or sharing without requiring Excel file uploads</li>
+                        <li><strong>Timezone Safe:</strong> Dates are automatically localized to your timezone</li>
                     </ul>
                 </div>
             </div>

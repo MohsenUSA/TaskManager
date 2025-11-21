@@ -65,35 +65,44 @@ Quick task templates for frequently repeated tasks:
 ## 🚀 Getting Started
 
 ### Prerequisites
-- Modern web browser (Chrome, Firefox, Safari, Edge)
-- No installation or server required!
+- Modern web browser (Chrome 90+, Firefox 88+, Safari 14+, or Edge 90+)
+- Excel, Google Sheets, or any spreadsheet application
+- No installation, server, or internet connection required!
 
 ### Quick Start
 
-1. **Download the files**
-   ```bash
-   git clone https://github.com/MohsenUSA/TaskManager.git
-   cd TaskManager
-   ```
+1. **Open the application**
+   - Double-click `TaskManager.html` to launch in your browser
+   - The app works 100% offline - no server needed
 
-2. **Open the application**
-   - Double-click `TaskManager.html` to open in your default browser
-   - Or right-click → Open with → [Your preferred browser]
+2. **Get the database template**
+   - Click **"📥 Download Template"** button in the app
+   - Or use the included `Database.xlsx` file from the repository
 
-3. **Download the template**
-   - Click the **"📥 Download Template"** button in the app
-   - Or use the Database.xlsx file from the repository
+3. **Set up your data** (in Database.xlsx)
+   - **Employees sheet**: Add your team members
+   - **Tasks sheet**: Add tasks with the following:
+     - **Date**: Required (MM-DD-YYYY format)
+     - **Time**: Optional - leave blank for all-day tasks, or use h:mm AM/PM format
+     - **Task**: Task title/name
+     - **Priority**: High, Medium, or Low
+     - **Status**: Pending, In Progress, Completed, or Cancelled
+     - **Assigned**: Employee name or "Everyone"
+     - **Description**: Optional details
 
-4. **Add your data**
-   - Open Database.xlsx in Excel or any spreadsheet application
-   - Add your employees to the **Employees** sheet
-   - Add your tasks to the **Tasks** sheet
-   - Save the file
+4. **Import your tasks**
+   - Drag and drop `Database.xlsx` into the upload area
+   - Or click the upload area to browse and select the file
+   - Tasks load instantly and save to your browser automatically
 
-5. **Import your data**
-   - Drag and drop Database.xlsx onto the application
-   - Or click the file upload area and select your file
-   - Tasks will load automatically!
+### What Happens Next
+
+✅ **All-day tasks** (no time specified) appear in a sticky blue section at the top
+✅ **Timed tasks** display below, sorted chronologically
+✅ **Current time indicator** shows your position in the day (red line)
+✅ **Real-time updates** - clock updates every second
+✅ **Auto-save** - all changes saved to browser localStorage
+✅ **Export anytime** - click "📊 Export to Excel" to download your updated tasks
 
 ---
 
