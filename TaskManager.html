@@ -3400,10 +3400,15 @@
 
             // Start clock and minute update intervals
             updateClock();
+            let lastMinute = new Date().getMinutes();
             clockInterval = setInterval(updateClock, 1000);
             minuteInterval = setInterval(function() {
-                if (currentFilterDate) {
-                    applyFilters();
+                const currentMinute = new Date().getMinutes();
+                if (currentMinute !== lastMinute) {
+                    lastMinute = currentMinute;
+                    if (currentFilterDate) {
+                        applyFilters();
+                    }
                 }
             }, 1000);
         });
