@@ -405,6 +405,10 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
 
+        .stat-allday {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        }
+
         .stat-completed {
             background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
             color: #333;
@@ -421,22 +425,27 @@
         }
 
         .metrics-section {
-            background: white;
-            border-radius: 10px;
-            padding: 25px;
-            margin-bottom: 30px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            background: linear-gradient(135deg, #f5e6d315 0%, #e8d4b815 100%);
+            border-left: 4px solid #d4a574;
+            border-radius: 5px;
+            padding: 0;
+            margin-bottom: 20px;
+            overflow: hidden;
         }
 
         .metrics-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #e9ecef;
+            padding: 20px;
+            cursor: pointer;
+            transition: background 0.3s;
             flex-wrap: wrap;
             gap: 10px;
+        }
+
+        .metrics-header:hover {
+            background: rgba(212, 165, 116, 0.1);
         }
 
         .metrics-header h3 {
@@ -446,11 +455,27 @@
         }
 
         .metrics-content {
+            padding: 0 20px 20px 20px;
             transition: all 0.3s ease;
         }
 
         .metrics-content.collapsed {
             display: none;
+        }
+
+        .metrics-toggle {
+            background: none;
+            border: none;
+            color: #d4a574;
+            font-size: 1.2em;
+            cursor: pointer;
+            padding: 5px 10px;
+            transition: transform 0.3s;
+            font-weight: bold;
+        }
+
+        .metrics-toggle:hover {
+            color: #b8956a;
         }
 
         .metrics-grid {
@@ -821,7 +846,7 @@
         }
 
         .assignee-badge.all-team {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
             color: white;
             cursor: pointer;
             transition: all 0.3s;
@@ -831,11 +856,16 @@
         .assignee-badge.all-team:hover {
             transform: scale(1.05);
             border-color: #495057;
-            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4);
         }
 
         .assignee-badge.all-team:active {
             transform: scale(0.98);
+        }
+
+        .assignee-badge.assigned {
+            border: 2px solid #3b82f6;
+            box-shadow: 0 0 8px rgba(59, 130, 246, 0.4);
         }
 
         .employee-selector-overlay {
@@ -1075,6 +1105,31 @@
 
         .priority-badge.low {
             background: #28a745;
+            color: white;
+        }
+
+        .overview-badge {
+            padding: 5px 12px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 600;
+            min-width: 100px;
+            text-align: center;
+            display: inline-block;
+        }
+
+        .overview-badge.total {
+            background: #6c757d;
+            color: white;
+        }
+
+        .overview-badge.all-day {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .overview-badge.scheduled {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
             color: white;
         }
 
@@ -1374,7 +1429,15 @@
             }
 
             .metrics-section {
+                padding: 0;
+            }
+
+            .metrics-header {
                 padding: 15px;
+            }
+
+            .metrics-content {
+                padding: 0 15px 15px 15px;
             }
 
             .metrics-header h3 {
@@ -1511,7 +1574,7 @@
                         <li>📅 <strong>All-Day Tasks</strong> - Leave Time blank for tasks that span the entire day (appear in sticky blue section at top)</li>
                         <li>🕐 <strong>Timed Tasks</strong> - Add specific times for scheduled activities (sorted chronologically below all-day tasks)</li>
                         <li>📍 <strong>Real-time Indicator</strong> - Red line shows current time position with automatic highlighting</li>
-                        <li>👥 <strong>Smart Assignment</strong> - Click "Everyone ➡️" to assign tasks to team members</li>
+                        <li>👥 <strong>Smart Assignment</strong> - Click "Everyone" to assign tasks to team members</li>
                         <li>✅ <strong>Quick Status Updates</strong> - Click any status badge to change task progress</li>
                         <li>🔍 <strong>Advanced Search</strong> - Filter by employee, status, priority, or custom text</li>
                         <li>📊 <strong>Live Analytics</strong> - Real-time metrics and priority × status breakdowns</li>
@@ -1544,6 +1607,10 @@
                     <h3 id="statTotal">0</h3>
                     <p>Total Tasks</p>
                 </div>
+                <div class="stat-card stat-allday">
+                    <h3 id="statAllDay">0</h3>
+                    <p>All Day</p>
+                </div>
                 <div class="stat-card stat-completed">
                     <h3 id="statCompleted">0</h3>
                     <p>Completed</p>
@@ -1559,14 +1626,39 @@
             </div>
 
             <div class="metrics-section">
-                <div class="metrics-header">
+                <div class="metrics-header" onclick="toggleMetrics()">
                     <h3>📊 Detailed Metrics</h3>
-                    <button class="btn btn-sm btn-secondary" onclick="toggleMetrics()">
-                        <span id="metricsToggleIcon">▶</span> <span id="metricsToggleText">Show Details</span>
-                    </button>
+                    <button class="metrics-toggle" id="metricsToggleIcon">▶</button>
                 </div>
                 <div id="metricsContent" class="metrics-content collapsed">
                     <div class="metrics-grid">
+                        <!-- Task Overview -->
+                        <div class="metric-card">
+                            <div class="metric-header">
+                                <div class="metric-title">📋 Task Overview</div>
+                            </div>
+                            <div class="task-overview-breakdown">
+                                <div class="metric-row">
+                                    <span class="metric-label">
+                                        <span class="overview-badge total">📊 Total Tasks</span>
+                                    </span>
+                                    <span class="metric-value" id="metricTotalTasks">0</span>
+                                </div>
+                                <div class="metric-row">
+                                    <span class="metric-label">
+                                        <span class="overview-badge all-day">📅 All-Day</span>
+                                    </span>
+                                    <span class="metric-value" id="metricAllDayTasks">0</span>
+                                </div>
+                                <div class="metric-row">
+                                    <span class="metric-label">
+                                        <span class="overview-badge scheduled">🕐 Scheduled</span>
+                                    </span>
+                                    <span class="metric-value" id="metricTimedTasks">0</span>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Priority Breakdown -->
                         <div class="metric-card">
                             <div class="metric-header">
@@ -2047,12 +2139,14 @@
             const allTasksForDate = allTasks.filter(task => task.normalizedDate === currentFilterDate);
             const stats = {
                 total: allTasksForDate.length,
+                allDay: allTasksForDate.filter(t => t.isAllDay).length,
                 completed: allTasksForDate.filter(t => t.Status?.toLowerCase() === 'completed').length,
                 progress: allTasksForDate.filter(t => t.Status?.toLowerCase() === 'in progress').length,
-                pending: allTasksForDate.filter(t => t.Status?.toLowerCase() === 'pending').length
+                pending: allTasksForDate.filter(t => t.Status?.toLowerCase() === 'pending' && !t.isAllDay).length
             };
 
             document.getElementById('statTotal').textContent = stats.total;
+            document.getElementById('statAllDay').textContent = stats.allDay;
             document.getElementById('statCompleted').textContent = stats.completed;
             document.getElementById('statProgress').textContent = stats.progress;
             document.getElementById('statPending').textContent = stats.pending;
@@ -2131,8 +2225,8 @@
                                         <div class="task-meta-item">
                                             <strong>👤</strong>
                                             ${isAllTeam ?
-                                                `<span class="assignee-badge all-team" onclick="assignToMe(event, '${task.id}')" title="Click to assign to yourself">${assignedTo} ➡️</span>` :
-                                                `<span class="assignee-badge">${assignedTo}</span>`
+                                                `<span class="assignee-badge all-team" onclick="assignToMe(event, '${task.id}')" title="Click to assign to yourself">${assignedTo}</span>` :
+                                                `<span class="assignee-badge assigned">${assignedTo}</span>`
                                             }
                                         </div>
                                     ` : ''}
@@ -2228,8 +2322,8 @@
                                         <div class="task-meta-item">
                                             <strong>👤</strong>
                                             ${isAllTeam ?
-                                                `<span class="assignee-badge all-team" onclick="assignToMe(event, '${task.id}')" title="Click to assign to yourself">${assignedTo} ➡️</span>` :
-                                                `<span class="assignee-badge">${assignedTo}</span>`
+                                                `<span class="assignee-badge all-team" onclick="assignToMe(event, '${task.id}')" title="Click to assign to yourself">${assignedTo}</span>` :
+                                                `<span class="assignee-badge assigned">${assignedTo}</span>`
                                             }
                                         </div>
                                     ` : ''}
@@ -2264,6 +2358,15 @@
         }
 
         function updateMetrics(tasks) {
+            // Task overview counts
+            const totalTasks = tasks.length;
+            const allDayTasks = tasks.filter(t => t.isAllDay).length;
+            const timedTasks = tasks.filter(t => !t.isAllDay).length;
+
+            document.getElementById('metricTotalTasks').textContent = totalTasks;
+            document.getElementById('metricAllDayTasks').textContent = allDayTasks;
+            document.getElementById('metricTimedTasks').textContent = timedTasks;
+
             // Priority counts
             const highPriority = tasks.filter(t => t.Priority?.toLowerCase() === 'high').length;
             const mediumPriority = tasks.filter(t => t.Priority?.toLowerCase() === 'medium').length;
@@ -2334,16 +2437,13 @@
         function toggleMetrics() {
             const content = document.getElementById('metricsContent');
             const icon = document.getElementById('metricsToggleIcon');
-            const text = document.getElementById('metricsToggleText');
 
             if (content.classList.contains('collapsed')) {
                 content.classList.remove('collapsed');
                 icon.textContent = '▼';
-                text.textContent = 'Hide Details';
             } else {
                 content.classList.add('collapsed');
                 icon.textContent = '▶';
-                text.textContent = 'Show Details';
             }
         }
 
@@ -2625,6 +2725,10 @@
             }
 
             // Calculate metrics
+            const totalTasks = allTasks.length;
+            const allDayTasks = allTasks.filter(t => t.isAllDay).length;
+            const scheduledTasks = allTasks.filter(t => !t.isAllDay).length;
+
             const highPriority = allTasks.filter(t => t.Priority?.toLowerCase() === 'high').length;
             const mediumPriority = allTasks.filter(t => t.Priority?.toLowerCase() === 'medium').length;
             const lowPriority = allTasks.filter(t => t.Priority?.toLowerCase() === 'low').length;
@@ -2683,9 +2787,28 @@
             worksheet.getCell(`A${currentRow}`).value = '📊 SUMMARY DASHBOARD';
             worksheet.getCell(`A${currentRow}`).style = sectionHeaderStyle;
             currentRow++;
-            worksheet.getRow(currentRow).values = ['Total Tasks', allTasks.length];
-            worksheet.getCell(`B${currentRow}`).style = centerAlign;
-            currentRow += 2;
+
+            // Task Overview
+            worksheet.getCell(`A${currentRow}`).value = '📋 TASK OVERVIEW';
+            worksheet.getCell(`A${currentRow}`).font = { bold: true };
+            currentRow++;
+            worksheet.getRow(currentRow).values = ['Type', 'Count'];
+            worksheet.getRow(currentRow).eachCell(cell => cell.style = headerStyle);
+            currentRow++;
+
+            const overviewData = [
+                ['📊 Total Tasks', totalTasks, 'FF6C757D'],
+                ['📅 All-Day', allDayTasks, 'FF667EEA'],
+                ['🕐 Scheduled', scheduledTasks, 'FF3B82F6']
+            ];
+            overviewData.forEach(([label, count, color]) => {
+                worksheet.getRow(currentRow).values = [label, count];
+                worksheet.getCell(`A${currentRow}`).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: color } };
+                worksheet.getCell(`A${currentRow}`).font = { bold: true, color: { argb: 'FFFFFFFF' } };
+                worksheet.getCell(`B${currentRow}`).style = centerAlign;
+                currentRow++;
+            });
+            currentRow++;
 
             // PRIORITY BREAKDOWN
             worksheet.getCell(`A${currentRow}`).value = '📌 PRIORITY BREAKDOWN';
@@ -2833,7 +2956,7 @@
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `tasks_report_${formatDateForCSV(getLocalDateString())}.xlsx`;
+            a.download = `Tasks_Report_${formatDateForCSV(getLocalDateString())}.xlsx`;
             a.click();
             URL.revokeObjectURL(url);
 
