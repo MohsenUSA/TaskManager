@@ -743,6 +743,16 @@
             color: white;
         }
 
+        .everyday-icon {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            font-size: 1em;
+            opacity: 0.8;
+            z-index: 10;
+            cursor: help;
+        }
+
         .all-day-tasks-section {
             position: sticky;
             top: 0;
@@ -1571,6 +1581,7 @@
                     <p><strong>✨ Key Features:</strong></p>
                     <ul>
                         <li>📅 <strong>All-Day Tasks</strong> - Leave Time blank for tasks that span the entire day (appear in sticky blue section at top)</li>
+                        <li>🔄 <strong>Everyday Tasks</strong> - Leave Date blank for tasks that appear on ALL dates (great for daily reminders)</li>
                         <li>🕐 <strong>Timed Tasks</strong> - Add specific times for scheduled activities (sorted chronologically below all-day tasks)</li>
                         <li>📍 <strong>Real-time Indicator</strong> - Red line shows current time position with automatic highlighting</li>
                         <li>👥 <strong>Smart Assignment</strong> - Click "Everyone" to assign tasks to team members</li>
@@ -1581,7 +1592,7 @@
 
                     <p><strong>📋 Excel File Structure:</strong></p>
                     <ul>
-                        <li><strong>Tasks Sheet:</strong> Date (MM-DD-YYYY), Time (h:mm AM/PM or blank for all-day), Task, Description, Priority (High/Medium/Low), Assigned, Status</li>
+                        <li><strong>Tasks Sheet:</strong> Date (MM-DD-YYYY or blank for everyday), Time (h:mm AM/PM or blank for all-day), Task, Description, Priority (High/Medium/Low), Assigned, Status</li>
                         <li><strong>Employees Sheet:</strong> Name (team member list for assignments)</li>
                         <li><strong>TaskTemplates Sheet:</strong> TaskName, Description (optional - for reusable templates)</li>
                         <li><strong>Note:</strong> First 2 rows in Tasks sheet are automatically skipped (reserved for instructions)</li>
@@ -1590,6 +1601,7 @@
                     <p><strong>💡 Pro Tips:</strong></p>
                     <ul>
                         <li><strong>All-Day Tasks:</strong> Perfect for deadlines, reminders, or flexible tasks - just leave Time column blank</li>
+                        <li><strong>Everyday Tasks:</strong> Leave Date blank for recurring daily tasks - they appear on every date with a 🔄 icon</li>
                         <li><strong>Priority Sorting:</strong> All-day tasks automatically sort by priority (High → Medium → Low)</li>
                         <li><strong>Date Navigation:</strong> Click date chips at top to quickly jump between dates</li>
                         <li><strong>Floating Clock Button:</strong> Click 🕐 to scroll to current time, click ⬆ to return to top</li>
@@ -1999,11 +2011,15 @@
                 return;
             }
 
+            // Count everyday tasks (no date = appears on all dates)
+            const everydayTaskCount = allTasks.filter(t => t.isEveryday).length;
+
             // Create date chips
             const dateChipsHTML = uniqueDates.map(date => {
                 const dateObj = new Date(date + 'T00:00:00');
                 const displayDate = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-                const taskCount = allTasks.filter(t => t.normalizedDate === date).length;
+                const dateSpecificCount = allTasks.filter(t => t.normalizedDate === date).length;
+                const taskCount = dateSpecificCount + everydayTaskCount;
                 const isActive = date === currentFilterDate ? 'active' : '';
                 return `<div class="date-chip ${isActive}" onclick="selectDate('${date}')">${displayDate} (${taskCount})</div>`;
             }).join('');
@@ -2059,7 +2075,8 @@
             console.log('applyFilters - Total tasks:', allTasks.length);
 
             filteredTasks = allTasks.filter(task => {
-                const matchesDate = task.normalizedDate === currentFilterDate;
+                // Match date OR include everyday tasks (no date = appears on all dates)
+                const matchesDate = task.normalizedDate === currentFilterDate || task.isEveryday;
 
                 // Only apply search filters if search is active
                 const matchesSearch = !searchTerm ||
@@ -2125,7 +2142,7 @@
             // Combine: all-day tasks first, then timed tasks
             filteredTasks = [...allDayTasks, ...timedTasks];
 
-            const allTasksForDate = allTasks.filter(task => task.normalizedDate === currentFilterDate);
+            const allTasksForDate = allTasks.filter(task => task.normalizedDate === currentFilterDate || task.isEveryday);
             const stats = {
                 total: allTasksForDate.length,
                 allDay: allTasksForDate.filter(t => t.isAllDay).length,
@@ -2185,9 +2202,11 @@
                     const currentStatus = task.Status || 'Pending';
                     const assignedTo = task.Assigned || 'Unassigned';
                     const isAllTeam = assignedTo.toLowerCase() === 'everyone';
+                    const everydayIcon = task.isEveryday ? '<span class="everyday-icon" title="Everyday task - appears on all dates">🔄</span>' : '';
 
                     allDayTasksHTML += `
                         <div class="task-card all-day priority-${priority} status-${status}" style="position: relative;">
+                            ${everydayIcon}
                             <div style="position: relative; z-index: 5; background: white; padding: 10px; margin: -10px;">
                                 <div class="task-header">
                                     <div class="task-title">${task.Task || 'Untitled Task'}</div>
@@ -2278,9 +2297,11 @@
                     const assignedTo = task.Assigned || 'Unassigned';
                     const isAllTeam = assignedTo.toLowerCase() === 'everyone';
                     const animClass = (!ENABLE_ANIMATIONS && taskClass === 'current') ? ' no-animation' : '';
+                    const everydayIcon = task.isEveryday ? '<span class="everyday-icon" title="Everyday task - appears on all dates">🔄</span>' : '';
 
                     timedTasksHTML += `
                         <div class="task-card priority-${priority} status-${status} ${taskClass}${animClass}" ${isCurrentTask ? `data-current-time="Current Time: ${now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })}"` : ''} style="position: relative;">
+                            ${everydayIcon}
                             ${isCurrentTask ? `
                                 <div class="current-time-indicator${ENABLE_ANIMATIONS ? '' : ' no-animation'}" style="position: absolute; top: 50%; left: -20px; right: -20px; transform: translateY(-50%); margin: 0; z-index: 0;"></div>
                             ` : ''}
@@ -2711,6 +2732,7 @@
 
             // Calculate metrics
             const totalTasks = allTasks.length;
+            const everydayTasks = allTasks.filter(t => t.isEveryday).length;
             const allDayTasks = allTasks.filter(t => t.isAllDay).length;
             const scheduledTasks = allTasks.filter(t => !t.isAllDay).length;
 
@@ -2781,6 +2803,7 @@
 
             const overviewData = [
                 ['📊 Total Tasks', totalTasks, 'FF6C757D'],
+                ['🔄 Everyday', everydayTasks, 'FFF093FB'],
                 ['📅 All-Day', allDayTasks, 'FF667EEA'],
                 ['🕐 Scheduled', scheduledTasks, 'FF3B82F6']
             ];
@@ -2904,13 +2927,13 @@
 
             allTasks.forEach(task => {
                 worksheet.getRow(currentRow).values = [
-                    formatDateForCSV(task.normalizedDate || task.Date || ''),
-                    task.Time || '',
+                    task.isEveryday ? 'Everyday' : formatDateForCSV(task.normalizedDate || task.Date || ''),
+                    task.Time || 'All Day',
                     task.Task || '',
                     task.Description || '',
-                    task.Priority || '',
-                    task.Assigned || '',
-                    task.Status || ''
+                    task.Priority || 'Low',
+                    task.Assigned || 'Everyone',
+                    task.Status || 'Pending'
                 ];
                 currentRow++;
             });
@@ -2998,6 +3021,12 @@
                 modifiedHTML = modifiedHTML.replace(
                     'class="file-upload-area"',
                     'class="file-upload-area" style="display: none !important;"'
+                );
+
+                // Hide the Clear Data button in standalone mode
+                modifiedHTML = modifiedHTML.replace(
+                    'onclick="clearAllData()"',
+                    'onclick="clearAllData()" style="display: none !important;"'
                 );
 
                 // Add a banner indicating this is a TV standalone version
@@ -3162,12 +3191,15 @@
                             .filter(task => task.Date || task.Task)
                             .map((task, index) => {
                                 const normalizedTime = normalizeTime(task.Time);
+                                const normalizedDateValue = normalizeDate(task.Date);
                                 return {
                                     ...task,
                                     id: task.id || `task_${Date.now()}_${index}`,
-                                    normalizedDate: normalizeDate(task.Date),
+                                    normalizedDate: normalizedDateValue,
                                     Time: normalizedTime,
                                     isAllDay: !normalizedTime || normalizedTime === null,
+                                    isEveryday: !normalizedDateValue || normalizedDateValue === null,
+                                    Assigned: task.Assigned || 'Everyone',
                                     Status: task.Status || 'Pending'
                                 };
                             });
@@ -3383,9 +3415,21 @@
             // Start clock and minute update intervals
             updateClock();
             let lastMinute = new Date().getMinutes();
+            let lastDate = getLocalDateString();
             clockInterval = setInterval(updateClock, 1000);
             minuteInterval = setInterval(function() {
                 const currentMinute = new Date().getMinutes();
+                const currentDate = getLocalDateString();
+
+                // Check for date change (midnight)
+                if (currentDate !== lastDate) {
+                    lastDate = currentDate;
+                    console.log('Midnight detected! Switching to new date:', currentDate);
+                    showToday();
+                    showSuccessMessage(`New day! Switched to ${new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}`);
+                }
+
+                // Update time indicator position every minute
                 if (currentMinute !== lastMinute) {
                     lastMinute = currentMinute;
                     if (currentFilterDate) {
