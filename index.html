@@ -343,13 +343,13 @@
         </div>
 
         <div class="download-buttons">
-            <a href="https://github.com/MohsenUSA/TaskManager/raw/refs/heads/main/TaskManager.html" class="btn btn-primary" download>
+            <a href="https://github.com/MohsenUSA/TaskManager/blob/main/TaskManager.html" class="btn btn-primary" target="_blank" rel="noopener noreferrer">
                 <span class="btn-icon">🚀</span>
-                <span>Download App</span>
+                <span>Get the App</span>
             </a>
-            <a href="https://github.com/MohsenUSA/TaskManager/raw/refs/heads/main/Database.xlsx" class="btn btn-secondary" download>
+            <a href="https://github.com/MohsenUSA/TaskManager/blob/main/Database.xlsx" class="btn btn-secondary" target="_blank" rel="noopener noreferrer">
                 <span class="btn-icon">📥</span>
-                <span>Download Template</span>
+                <span>Get the Template</span>
             </a>
         </div>
     </div>
@@ -368,14 +368,6 @@
     </div>
 
     <script>
-        // Configure marked to open links in new tab
-        const renderer = new marked.Renderer();
-        renderer.link = function(href, title, text) {
-            const titleAttr = title ? ` title="${title}"` : '';
-            return `<a href="${href}" target="_blank" rel="noopener noreferrer"${titleAttr}>${text}</a>`;
-        };
-        marked.setOptions({ renderer: renderer });
-
         // Fetch and render README.md
         async function loadReadme() {
             try {
@@ -385,12 +377,18 @@
                 const markdown = await response.text();
                 const html = marked.parse(markdown);
                 document.getElementById('readme').innerHTML = html;
+
+                // Make all links open in new tab
+                document.querySelectorAll('#readme a').forEach(link => {
+                    link.setAttribute('target', '_blank');
+                    link.setAttribute('rel', 'noopener noreferrer');
+                });
             } catch (error) {
                 console.error('Error loading README:', error);
                 document.getElementById('readme').innerHTML = `
                     <h2>📋 Documentation</h2>
                     <p>Unable to load README. Please visit the
-                    <a href="https://github.com/MohsenUSA/TaskManager" target="_blank">GitHub repository</a>
+                    <a href="https://github.com/MohsenUSA/TaskManager" target="_blank" rel="noopener noreferrer">GitHub repository</a>
                     for full documentation.</p>
                 `;
             }
