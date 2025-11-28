@@ -323,17 +323,13 @@ The application provides real-time metrics:
 
 ## 🤝 Contributing
 
-Contributions are welcome! Feel free to:
-- Report bugs via GitHub Issues
-- Suggest features
-- Submit pull requests
-- Improve documentation
+Contributions are welcome! Feel free to report bugs via GitHub Issues or on Twitter/X
 
 ---
 
 ## 📝 License
 
-This project is open source and available under the MIT License.
+This project is open source and available under the MIT License for any lawful use.
 
 ---
 

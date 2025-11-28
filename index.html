@@ -368,6 +368,14 @@
     </div>
 
     <script>
+        // Configure marked to open links in new tab
+        const renderer = new marked.Renderer();
+        renderer.link = function(href, title, text) {
+            const titleAttr = title ? ` title="${title}"` : '';
+            return `<a href="${href}" target="_blank" rel="noopener noreferrer"${titleAttr}>${text}</a>`;
+        };
+        marked.setOptions({ renderer: renderer });
+
         // Fetch and render README.md
         async function loadReadme() {
             try {
