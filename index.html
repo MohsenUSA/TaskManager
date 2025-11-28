@@ -343,13 +343,13 @@
         </div>
 
         <div class="download-buttons">
-            <a href="https://github.com/MohsenUSA/TaskManager/blob/main/TaskManager.html" class="btn btn-primary" target="_blank" rel="noopener noreferrer">
+            <a href="#" class="btn btn-primary" onclick="downloadFile('https://raw.githubusercontent.com/MohsenUSA/TaskManager/main/TaskManager.html', 'TaskManager.html'); return false;">
                 <span class="btn-icon">🚀</span>
-                <span>Get the App</span>
+                <span>Download App</span>
             </a>
-            <a href="https://github.com/MohsenUSA/TaskManager/blob/main/Database.xlsx" class="btn btn-secondary" target="_blank" rel="noopener noreferrer">
+            <a href="#" class="btn btn-secondary" onclick="downloadFile('https://raw.githubusercontent.com/MohsenUSA/TaskManager/main/Database.xlsx', 'Database.xlsx'); return false;">
                 <span class="btn-icon">📥</span>
-                <span>Get the Template</span>
+                <span>Download Template</span>
             </a>
         </div>
     </div>
@@ -368,6 +368,25 @@
     </div>
 
     <script>
+        // Force download file from URL
+        async function downloadFile(url, filename) {
+            try {
+                const response = await fetch(url);
+                const blob = await response.blob();
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = filename;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(link.href);
+            } catch (error) {
+                console.error('Download failed:', error);
+                // Fallback: open in new tab
+                window.open(url, '_blank');
+            }
+        }
+
         // Fetch and render README.md
         async function loadReadme() {
             try {
