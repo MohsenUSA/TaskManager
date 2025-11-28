@@ -49,7 +49,28 @@ Contains all task data with the following columns:
 
 > **Note:** The first 2 rows are reserved for instructions/headers and are automatically skipped during import.
 
-> **All-Day Tasks:** Leave the Time column blank for tasks that span the entire day. These tasks will appear in a special sticky section at the top of the view, sorted by priority.
+#### ⚠️ Important: Date & Time Behavior
+
+Understanding how Date and Time combinations work:
+
+| Date | Time | Result |
+|------|------|--------|
+| ✅ Has date | ✅ Has time | Timed task for that specific date |
+| ❌ No date | ✅ Has time | **Everyday** timed task (appears on ALL dates) |
+| ✅ Has date | ❌ No time | **All-day** task for that specific date |
+| ❌ No date | ❌ No time | **All-day** task for **every** date (always visible) |
+
+#### 📥 Default Values on Import
+
+When importing from Excel, missing fields are automatically filled with sensible defaults:
+
+| Field | Default Value | Notes |
+|-------|---------------|-------|
+| **Date** | Everyday | Task appears on all dates (🔄 icon shown) |
+| **Time** | All Day | Task appears in sticky blue section at top |
+| **Priority** | Low | Green priority badge |
+| **Assigned** | Everyone | Can be reassigned by clicking the badge |
+| **Status** | Pending | Yellow status badge |
 
 #### **Employees Sheet**
 Lists all team members:
@@ -82,12 +103,12 @@ Quick task templates for frequently repeated tasks:
 3. **Set up your data** (in Database.xlsx)
    - **Employees sheet**: Add your team members
    - **Tasks sheet**: Add tasks with the following:
-     - **Date**: Required (MM-DD-YYYY format)
-     - **Time**: Optional - leave blank for all-day tasks, or use h:mm AM/PM format
+     - **Date**: Optional (MM-DD-YYYY format) - leave blank for everyday tasks
+     - **Time**: Optional (h:mm AM/PM format) - leave blank for all-day tasks
      - **Task**: Task title/name
-     - **Priority**: High, Medium, or Low
-     - **Status**: Pending, In Progress, or Completed
-     - **Assigned**: Employee name or "Everyone"
+     - **Priority**: Optional - defaults to "Low" (High, Medium, or Low)
+     - **Status**: Optional - defaults to "Pending" (Pending, In Progress, or Completed)
+     - **Assigned**: Optional - defaults to "Everyone" (employee name or "Everyone")
      - **Description**: Optional details
 
 4. **Import your tasks**
@@ -98,6 +119,7 @@ Quick task templates for frequently repeated tasks:
 ### What Happens Next
 
 ✅ **All-day tasks** (no time specified) appear in a sticky blue section at the top
+✅ **Everyday tasks** (no date specified) appear on ALL dates with a 🔄 icon
 ✅ **Timed tasks** display below, sorted chronologically
 ✅ **Current time indicator** shows your position in the day (red line)
 ✅ **Real-time updates** - clock updates every second
@@ -232,7 +254,9 @@ The application provides real-time metrics:
 - ✅ Export regularly to back up your tasks
 - ✅ Use consistent date format (MM-DD-YYYY)
 - ✅ Use consistent time format (h:mm AM/PM for timed tasks)
+- ✅ Leave Date column blank for everyday tasks (appears on all dates)
 - ✅ Leave Time column blank for all-day tasks
+- ✅ Missing fields auto-fill with defaults (Priority→Low, Status→Pending, Assigned→Everyone)
 - ⚠️ Don't delete sheet names (Tasks, Employees, TaskTemplates)
 - ⚠️ Don't modify column headers in the Tasks sheet
 
@@ -242,6 +266,13 @@ The application provides real-time metrics:
 - High priority all-day tasks appear first in the sticky section
 - All-day tasks won't trigger current/past time indicators
 - Perfect for daily goals, milestones, or flexible deadlines
+
+### Everyday Tasks Best Practices
+- Leave Date blank to create tasks that appear on ALL dates
+- Everyday tasks display a 🔄 icon to indicate they're recurring
+- Combine with Time for daily scheduled reminders (e.g., "9:00 AM Daily Standup")
+- Combine without Time for persistent all-day reminders
+- Perfect for daily routines, recurring meetings, or standing reminders
 
 ### Task Assignment
 - Use "Everyone" for tasks that can be picked up by anyone
@@ -326,8 +357,7 @@ This project is open source and available under the MIT License.
 If you encounter issues or have questions:
 1. Check this README for guidance
 2. Review the Getting Started section
-3. Open an issue on GitHub
-4. Include browser version and error details
+3. Need help or have suggestions or feedback? find me on Twitter/X : [@XPRODUCTIVITY](https://x.com/xproductivity)
 
 ---
 
