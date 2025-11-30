@@ -47,7 +47,7 @@ Contains all task data with the following columns:
 - **Assigned** - Employee name or "Everyone" for unassigned
 - **Status** - Pending, In Progress, or Completed
 
-> **Note:** The first 2 rows are reserved for instructions/headers and are automatically skipped during import.
+> **Note:** The first 3 rows are reserved for instructions/headers and are automatically skipped during import. Tasks should be entered starting from Row 4.
 
 #### ⚠️ Important: Date & Time Behavior
 
@@ -74,7 +74,10 @@ When importing from Excel, missing fields are automatically filled with sensible
 
 #### **Employees Sheet**
 Lists all team members:
-- **Name** - Employee full name
+- **Name** (Column A) - Employee full name
+- **Role** (Column B) - Optional role/title
+
+> **Important:** "Everyone" must remain in Row 2 (mandatory). Add employee names starting from Row 3.
 
 #### **TaskTemplates Sheet** (Optional)
 Quick task templates for frequently repeated tasks:
@@ -101,8 +104,8 @@ Quick task templates for frequently repeated tasks:
    - Or use the included `Database.xlsx` file from the repository
 
 3. **Set up your data** (in Database.xlsx)
-   - **Employees sheet**: Add your team members
-   - **Tasks sheet**: Add tasks with the following:
+   - **Employees sheet**: Add your team members starting from Row 3 (Row 2 "Everyone" is mandatory)
+   - **Tasks sheet**: Add tasks starting from Row 4 with the following:
      - **Date**: Optional (MM-DD-YYYY format) - leave blank for everyday tasks
      - **Time**: Optional (h:mm AM/PM format) - leave blank for all-day tasks
      - **Task**: Task title/name
@@ -112,6 +115,7 @@ Quick task templates for frequently repeated tasks:
      - **Description**: Optional details
 
 4. **Import your tasks**
+   - For a fresh start, click "Clear Data" first to clear any cached data, then refresh the page
    - Drag and drop `Database.xlsx` into the upload area
    - Or click the upload area to browse and select the file
    - Tasks load instantly and save to your browser automatically
@@ -134,7 +138,7 @@ Quick task templates for frequently repeated tasks:
 
 **Method 1: Import from Excel**
 1. Open Database.xlsx in Excel
-2. Fill in task details in the Tasks sheet
+2. Fill in task details in the Tasks sheet (starting from Row 4)
 3. Drag and drop the file into the application
 
 **Method 2: Edit Exported File**
@@ -259,6 +263,7 @@ The application provides real-time metrics:
 - ✅ Missing fields auto-fill with defaults (Priority→Low, Status→Pending, Assigned→Everyone)
 - ⚠️ Don't delete sheet names (Tasks, Employees, TaskTemplates)
 - ⚠️ Don't modify column headers in the Tasks sheet
+- ⚠️ Don't remove "Everyone" from Row 2 in the Employees sheet (mandatory)
 
 ### All-Day Tasks Best Practices
 - Use all-day tasks for deadlines without specific times
