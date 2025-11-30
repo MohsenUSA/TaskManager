@@ -358,7 +358,8 @@ This project is open source and available under the MIT License for any lawful u
 If you encounter issues or have questions:
 1. Check this README for guidance
 2. Review the Getting Started section
-3. Need help or have suggestions or feedback? find me on Twitter/X : [@XPRODUCTIVITY](https://x.com/xproductivity)
+3. [Download SOP](https://github.com/MohsenUSA/TaskManager/blob/0c1e00f7ee4f9309c10a39e2daa387037681d955/SOP.md) - Standard Operating Procedures for detailed usage instructions
+4. Need help or have suggestions or feedback? find me on Twitter/X : [@XPRODUCTIVITY](https://x.com/xproductivity)
 
 ---
 
