@@ -1,14 +1,14 @@
 # Task Manager
 
-A powerful, single-file task management application with real-time tracking, Excel integration, and advanced filtering capabilities.
+A powerful, single-file task management application with real-time tracking, spreadsheet integration, and advanced filtering capabilities.
 
 ## 📋 Overview
 
-Task Manager is a lightweight, browser-based task management system that combines the simplicity of a single HTML file with the power of Excel data integration. It provides real-time task tracking, employee assignment, priority management, and comprehensive analytics—all without requiring a backend server or database.
+Task Manager is a lightweight, browser-based task management system that combines the simplicity of a single HTML file with the power of spreadsheet data integration. It provides real-time task tracking, employee assignment, priority management, and comprehensive analytics—all without requiring a backend server or database.
 
 ### Key Features
 
-- **📊 Excel Integration** - Import/export tasks seamlessly with Excel files
+- **📊 Spreadsheet Integration** - Import/export tasks seamlessly with spreadsheet files
 - **📅 All-Day Tasks** - Tasks without time automatically display as all-day tasks in a dedicated section
 - **🕐 Real-time Tracking** - Visual current time indicator with automatic task highlighting
 - **👥 Multi-User Assignment** - Assign tasks to one or multiple team members with clickable badges
@@ -29,14 +29,14 @@ Task Manager is a lightweight, browser-based task management system that combine
 The main application file containing:
 - Complete UI/UX implementation
 - Task rendering and management logic
-- Excel file reading/writing functionality
+- Spreadsheet file reading/writing functionality
 - Real-time clock and time indicator system
 - Search and filter engine
 - Analytics and metrics dashboard
 - Local storage management
 
 ### 2. **Database.xlsx**
-The Excel template/database file with three sheets:
+The database template file with three sheets:
 
 #### **Tasks Sheet**
 Contains all task data with the following columns:
@@ -47,7 +47,7 @@ Contains all task data with the following columns:
 - **Priority** - High, Medium, or Low
 - **Assigned** - Employee name(s), comma-separated for multiple (e.g., "John, Sarah, Mike")
 - **Status** - Pending, In Progress, or Completed
-- **Subtasks** - Checklist items, one per line (use Alt+Enter for new lines in Excel)
+- **Subtasks** - Checklist items, one per line (use Alt+Enter for new lines in the database)
 
 > **Note:** The first 3 rows are reserved for instructions/headers and are automatically skipped during import. Tasks should be entered starting from Row 4.
 
@@ -64,7 +64,7 @@ Understanding how Date and Time combinations work:
 
 #### 📥 Default Values on Import
 
-When importing from Excel, missing fields are automatically filled with sensible defaults:
+When importing from the database, missing fields are automatically filled with sensible defaults:
 
 | Field | Default Value | Notes |
 |-------|---------------|-------|
@@ -131,7 +131,7 @@ Quick task templates for frequently repeated tasks:
 ✅ **Current time indicator** shows your position in the day (red line)
 ✅ **Real-time updates** - clock updates every second
 ✅ **Auto-save** - all changes saved to browser localStorage
-✅ **Export anytime** - click "📊 Export to Excel" to download your updated tasks
+✅ **Export anytime** - click "📊 Export Report" to download your updated tasks
 
 ---
 
@@ -139,20 +139,20 @@ Quick task templates for frequently repeated tasks:
 
 ### Adding Tasks
 
-**Method 1: Import from Excel**
-1. Open Database.xlsx in Excel
+**Method 1: Import from the database**
+1. Open Database.xlsx in the database
 2. Fill in task details in the Tasks sheet (starting from Row 4)
 3. Drag and drop the file into the application
 
 **Method 2: Edit Exported File**
-1. Click **"📊 Export to Excel"** to download current tasks
+1. Click **"📊 Export Report"** to download current tasks
 2. Edit the exported file
 3. Re-import the modified file
 
 ### Managing Tasks
 
 #### **All-Day Tasks**
-- Leave the Time column blank in Excel to create all-day tasks
+- Leave the Time column blank in the database to create all-day tasks
 - All-day tasks appear in a blue-bordered section at the top
 - Displayed vertically (same layout as timed tasks)
 - Shows "📅 All Day" badge instead of time
@@ -168,7 +168,7 @@ Quick task templates for frequently repeated tasks:
 - Multiple assignees display as: 👥 [John] [Sarah] [Mike]
 
 #### **Subtasks**
-- Add subtasks in Excel using the Subtasks column
+- Add subtasks in the database using the Subtasks column
 - Use Alt+Enter (Windows) or Ctrl+Option+Enter (Mac) for new lines
 - Subtasks display as a checklist within the task card:
   ```
@@ -271,7 +271,7 @@ The application provides real-time metrics:
 
 ## 💡 Tips & Best Practices
 
-### Excel File Management
+### Database File Management
 - ✅ Keep the Database.xlsx file as your master copy
 - ✅ Export regularly to back up your tasks
 - ✅ Use consistent date format (MM-DD-YYYY)
@@ -301,13 +301,13 @@ The application provides real-time metrics:
 - Use "Everyone" for tasks that can be picked up by anyone
 - Assign specific names for dedicated responsibilities
 - Click any assignee badge to open the multi-select modal
-- Assign multiple people: "John, Sarah, Mike" in Excel or via the modal
+- Assign multiple people: "John, Sarah, Mike" in the database or via the modal
 - Selecting "Everyone" clears individual assignments
 - 👤 icon = single assignee, 👥 icon = multiple assignees
 
 ### Subtasks Best Practices
 - Use subtasks to break complex tasks into smaller steps
-- Enter each subtask on a new line (Alt+Enter in Excel)
+- Enter each subtask on a new line (Alt+Enter in the database)
 - Keep subtask descriptions concise
 - Subtasks are informational - no separate status tracking
 - Perfect for checklists, step-by-step procedures, or action items
@@ -330,7 +330,7 @@ The application provides real-time metrics:
 - **No Server** - No data sent to external servers
 - **No Tracking** - No analytics or tracking scripts
 - **Offline Capable** - Works without internet connection
-- **Your Data** - Excel files stay on your device
+- **Your Data** - spreadsheet files stay on your device
 
 ---
 

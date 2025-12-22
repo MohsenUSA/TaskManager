@@ -19,7 +19,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: white;
             min-height: 100vh;
             padding: 20px;
         }
@@ -34,10 +34,13 @@
         }
 
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            background: white;
+            color: #333;
             padding: 20px 30px;
-            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
         }
 
         .header h1 {
@@ -46,8 +49,8 @@
         }
 
         .demo-badge {
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
+            background: rgba(0, 0, 0, 0.1);
+            color: #333;
             padding: 5px 15px;
             border-radius: 20px;
             font-size: 0.9em;
@@ -59,16 +62,19 @@
             font-size: 2em;
             font-weight: 300;
             margin-top: 0;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
+            padding: 12px 20px;
+            background: #f5f5f5;
+            border: 1px solid #e0e0e0;
+            border-radius: 20px;
             display: inline-block;
         }
 
         .current-date {
             font-size: 1.2em;
-            margin-top: 10px;
-            opacity: 0.9;
+            padding: 8px 16px;
+            background: #f5f5f5;
+            border: 1px solid #e0e0e0;
+            border-radius: 20px;
         }
 
         .controls {
@@ -379,9 +385,9 @@
 
         .stat-card {
             flex: 1;
-            min-width: 150px;
-            padding: 20px;
-            border-radius: 10px;
+            min-width: 120px;
+            padding: 12px 15px;
+            border-radius: 8px;
             text-align: center;
             color: white;
             transition: transform 0.3s;
@@ -392,36 +398,38 @@
         }
 
         .stat-card h3 {
-            font-size: 2em;
-            margin-bottom: 5px;
+            font-size: 1.5em;
+            margin-bottom: 3px;
         }
 
         .stat-card p {
-            font-size: 0.9em;
+            font-size: 0.8em;
             opacity: 0.9;
         }
 
         .stat-total {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #9ca3af;
+            color: white;
         }
 
         .stat-allday {
-            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            background: #93c5fd;
+            color: #1e3a5f;
         }
 
         .stat-completed {
-            background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
-            color: #333;
+            background: #a7f3d0;
+            color: #166534;
         }
 
         .stat-progress {
-            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
-            color: #333;
+            background: #fde68a;
+            color: #92400e;
         }
 
         .stat-pending {
-            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
-            color: #333;
+            background: #fecaca;
+            color: #991b1b;
         }
 
         .metrics-section {
@@ -1551,11 +1559,11 @@
 
         <div class="controls">
             <div class="control-section">
-                <label>📂 Load Excel File (.xlsx):</label>
+                <label>📂 Load Database (.xlsx):</label>
                 <div class="file-upload-area" id="dropArea" onclick="if(event.target.id !== 'excelFile') document.getElementById('excelFile').click()">
                     <div class="file-upload-icon">📁</div>
                     <div class="file-upload-text">
-                        <strong>Click to browse</strong> or drag & drop your Excel file here
+                        <strong>Click to browse</strong> or drag & drop your Spreadsheet file here
                     </div>
                     <div class="file-name-display" id="fileName"></div>
                     <input type="file" id="excelFile" accept=".xlsx,.xls" onclick="event.stopPropagation()" />
@@ -1599,7 +1607,7 @@
             </div>
 
             <div class="action-buttons">
-                <button class="btn btn-success" onclick="exportToExcel()">📊 Export to Excel</button>
+                <button class="btn btn-success" onclick="exportToExcel()">📊 Export Report</button>
                 <button class="btn btn-warning" onclick="exportForTV()" id="exportTVButton" style="display: none;">📺 Export for TV</button>
                 <a class="btn btn-info" href="https://github.com/MohsenUSA/TaskManager/raw/refs/heads/main/Database.xlsx" target="_blank">📥 Download Template</a>
                 <button class="btn btn-danger" onclick="clearAllData()">🗑️ Clear Data</button>
@@ -1620,7 +1628,7 @@
                     <ul>
                         <li>📥 <strong>Download Template</strong> - Click the button above to get Database.xlsx</li>
                         <li>✏️ <strong>Add Your Data</strong> - Fill in Tasks, Employees, and TaskTemplates sheets</li>
-                        <li>📁 <strong>Upload File</strong> - Drag & drop your Excel file into the upload area above</li>
+                        <li>📁 <strong>Upload File</strong> - Drag & drop your Spreadsheet file into the upload area above</li>
                         <li>✨ <strong>Start Managing</strong> - Tasks load instantly and auto-save to your browser</li>
                     </ul>
 
@@ -1636,7 +1644,7 @@
                         <li>📊 <strong>Live Analytics</strong> - Real-time metrics and priority × status breakdowns</li>
                     </ul>
 
-                    <p><strong>📋 Excel File Structure:</strong></p>
+                    <p><strong>📋 Spreadsheet Structure:</strong></p>
                     <ul>
                         <li><strong>Tasks Sheet:</strong> Date (MM-DD-YYYY or blank for everyday), Time (h:mm AM/PM or blank for all-day), Task, Description, Priority (High/Medium/Low), Assigned, Status</li>
                         <li><strong>Employees Sheet:</strong> Name (team member list for assignments)</li>
@@ -1652,8 +1660,8 @@
                         <li><strong>Date Navigation:</strong> Click date chips at top to quickly jump between dates</li>
                         <li><strong>Floating Clock Button:</strong> Click 🕐 to scroll to current time, click ⬆ to return to top</li>
                         <li><strong>Auto-Save:</strong> All status changes save automatically to browser storage</li>
-                        <li><strong>Export to Excel:</strong> Click "📊 Export to Excel" to download updated tasks with metrics</li>
-                        <li><strong>Export for TV:</strong> Click "📺 Export for TV" (appears after loading data) to create a standalone HTML file with tasks embedded - perfect for TV displays, kiosks, or sharing without requiring Excel file uploads</li>
+                        <li><strong>Export Report:</strong> Click "📊 Export Report" to download updated tasks with metrics</li>
+                        <li><strong>Export for TV:</strong> Click "📺 Export for TV" (appears after loading data) to create a standalone HTML file with tasks embedded - perfect for TV displays, kiosks, or sharing without requiring Spreadsheet file uploads</li>
                         <li><strong>Timezone Safe:</strong> Dates are automatically localized to your timezone</li>
                     </ul>
                 </div>
@@ -1947,7 +1955,7 @@
                 saveToLocalStorage();
                 updateAvailableDates();
                 applyFilters();
-                showSuccessMessage('Status updated! Export to Excel to save changes.');
+                showSuccessMessage('Status updated! Export Report to save changes.');
             }
         }
 
@@ -2412,7 +2420,7 @@
                 tasksList.innerHTML = `
                     <div class="no-tasks">
                         <h3>🔍 No tasks found</h3>
-                        <p>Try adjusting your filters or add tasks in your Excel file</p>
+                        <p>Try adjusting your filters or add tasks in your Spreadsheet file</p>
                     </div>
                 `;
                 return;
@@ -2615,11 +2623,15 @@
             document.getElementById('metricStatusProgress').textContent = inProgress;
             document.getElementById('metricStatusCompleted').textContent = completed;
 
-            // Employee metrics
+            // Employee metrics (count each assignee separately for multi-assignee tasks)
             const employeeCounts = {};
             tasks.forEach(task => {
-                const employee = task.Assigned || 'Unassigned';
-                employeeCounts[employee] = (employeeCounts[employee] || 0) + 1;
+                const assignees = task.assignees && task.assignees.length > 0 ? task.assignees : ['Unassigned'];
+                assignees.forEach(employee => {
+                    if (employee.toLowerCase() !== 'everyone') {
+                        employeeCounts[employee] = (employeeCounts[employee] || 0) + 1;
+                    }
+                });
             });
 
             const sortedEmployees = Object.entries(employeeCounts).sort((a, b) => b[1] - a[1]);
@@ -2691,7 +2703,7 @@
 
             // Check if employees array exists and has items
             if (!employees || employees.length === 0) {
-                alert('No employees loaded from Excel file. Please upload an Excel file with an "Employees" sheet first.');
+                alert('No employees loaded from Spreadsheet file. Please upload a spreadsheet file with an "Employees" sheet first.');
                 return;
             }
 
@@ -2964,11 +2976,15 @@
             const inProgress = allTasks.filter(t => t.Status?.toLowerCase() === 'in progress').length;
             const completed = allTasks.filter(t => t.Status?.toLowerCase() === 'completed').length;
 
-            // Employee metrics
+            // Employee metrics (count each assignee separately for multi-assignee tasks)
             const employeeCounts = {};
             allTasks.forEach(task => {
-                const employee = task.Assigned || 'Unassigned';
-                employeeCounts[employee] = (employeeCounts[employee] || 0) + 1;
+                const assignees = task.assignees && task.assignees.length > 0 ? task.assignees : ['Unassigned'];
+                assignees.forEach(employee => {
+                    if (employee.toLowerCase() !== 'everyone') {
+                        employeeCounts[employee] = (employeeCounts[employee] || 0) + 1;
+                    }
+                });
             });
             const sortedEmployees = Object.entries(employeeCounts).sort((a, b) => b[1] - a[1]);
 
@@ -3197,12 +3213,12 @@
             a.click();
             URL.revokeObjectURL(url);
 
-            showSuccessMessage('Excel report exported with professional formatting!');
+            showSuccessMessage('Spreadsheet report exported with professional formatting!');
         }
 
         function exportForTV() {
             if (allTasks.length === 0) {
-                alert('No tasks loaded! Please import an Excel file first.');
+                alert('No tasks loaded! Please import a spreadsheet file first.');
                 return;
             }
 
@@ -3263,7 +3279,7 @@
 
                 // Add a banner indicating this is a TV standalone version
                 const tvBanner = `
-            <div style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; padding: 15px; text-align: center; font-weight: bold; font-size: 1.1em;">
+            <div style="background: #a7f3d0; color: #166534; padding: 12px; text-align: center; font-weight: bold; font-size: 1em; border-bottom: 1px solid #86efac;">
                 📺 TV Standalone Mode - Data Embedded | ${allTasks.length} Tasks Loaded
             </div>
 `;
@@ -3332,7 +3348,7 @@
                 saveToLocalStorage();
                 updateAvailableDates();
                 applyFilters();
-                showSuccessMessage('Data cleared! Please upload an Excel file to load tasks.');
+                showSuccessMessage('Data cleared! Please upload a spreadsheet file to load tasks.');
             }
         }
 
@@ -3487,7 +3503,7 @@
                     // Clear the file input value to prevent re-triggering and allow same file re-upload
                     fileInput.value = '';
                 } catch (error) {
-                    alert('Error reading Excel file: ' + error.message);
+                    alert('Error reading Spreadsheet file: ' + error.message);
                     document.getElementById('fileName').textContent = '';
                     document.getElementById('dropArea').classList.remove('has-file');
                     // Clear the file input value on error too

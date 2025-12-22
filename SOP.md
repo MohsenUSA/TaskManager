@@ -209,7 +209,7 @@ This SOP applies to all personnel using the Task Manager application for:
    - Identify high-priority items for tomorrow
 
 3. **Export Data (Weekly Recommended)**
-   - Click "Export to Excel" button
+   - Click "Export Report" button
    - Save exported file with date in filename
    - Store in backup location
 
@@ -219,7 +219,7 @@ This SOP applies to all personnel using the Task Manager application for:
 
 ### 7.1 Creating New Tasks
 
-**Excel Import**
+**Database Import**
 
 1. Open `Database.xlsx`
 2. Navigate to **Tasks** sheet
@@ -238,7 +238,7 @@ This SOP applies to all personnel using the Task Manager application for:
 
    *See Section 7.2 for date/time behavior
 
-4. Save Excel file
+4. Save database file
 5. Import file into Task Manager
 
 
@@ -275,7 +275,7 @@ This SOP applies to all personnel using the Task Manager application for:
 - If all selections are removed, defaults back to "Everyone"
 - Changes save automatically to browser storage
 
-**Excel Format for Multiple Assignees:**
+**Database Format for Multiple Assignees:**
 
 In the Assigned column, separate names with commas:
 ```
@@ -313,7 +313,7 @@ John, Sarah, Mike
 
 **Procedure:**
 
-1. Set priority in Excel before import
+1. Set priority in the database before import
 2. To change: export data, modify, re-import
 3. If not set, they show as Low by default on import
 
@@ -321,7 +321,7 @@ John, Sarah, Mike
 
 Subtasks are informational checklist items displayed within a task card. They help break down larger tasks into smaller steps.
 
-**Adding Subtasks in Excel:**
+**Adding Subtasks in the database:**
 
 1. Open `Database.xlsx`
 2. In the **Subtasks** column (Column H), enter each subtask on a new line
@@ -355,7 +355,7 @@ Subtasks appear in a highlighted box within the task card:
 **Notes:**
 
 - Subtasks are informational only (no status tracking)
-- Subtasks are included in Excel exports
+- Subtasks are included in the database exports
 - Subtasks display on both regular and TV standalone versions
 
 ### 7.7 Filtering and Searching Tasks
@@ -402,7 +402,7 @@ Subtasks appear in a highlighted box within the task card:
 
 **Procedure:**
 
-1. Click "Export to Excel" button
+1. Click "Export Report" button
 2. File downloads automatically as `TaskManager_Export_[timestamp].xlsx`
 3. Exported file includes:
    - Summary dashboard
@@ -444,7 +444,7 @@ Subtasks appear in a highlighted box within the task card:
 
 **Standard Report:**
 
-1. Click "Export to Excel"
+1. Click "Export Report"
 2. Open exported file
 3. Review pre-formatted sheets:
    - **Summary**: High-level overview
@@ -474,7 +474,7 @@ Subtasks appear in a highlighted box within the task card:
 #### Issue: Tasks not displaying after import
 
 **Possible Causes:**
-- Incorrect Excel format
+- Incorrect file format
 - Column headers modified
 - Invalid date/time format
 
