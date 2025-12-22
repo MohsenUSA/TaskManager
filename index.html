@@ -133,7 +133,14 @@
         }
 
         .btn-icon {
-            font-size: 1.4em;
+            display: flex;
+            align-items: center;
+        }
+
+        .btn-icon svg {
+            width: 38px;
+            height: 38px;
+            fill: currentColor;
         }
 
         .features {
@@ -458,15 +465,15 @@
 
         <div class="download-buttons">
             <a href="#" class="btn btn-primary" onclick="downloadFile('https://raw.githubusercontent.com/MohsenUSA/TaskManager/main/TaskManager.html', 'TaskManager.html'); return false;">
-                <span class="btn-icon">↓</span>
+                <span class="btn-icon"><svg viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"/></svg></span>
                 <span>Download App</span>
             </a>
             <a href="#" class="btn btn-secondary" onclick="downloadFile('https://raw.githubusercontent.com/MohsenUSA/TaskManager/main/Database.xlsx', 'Database.xlsx'); return false;">
-                <span class="btn-icon">↓</span>
+                <span class="btn-icon"><svg viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"/></svg></span>
                 <span>Template</span>
             </a>
             <a href="#" class="btn btn-secondary" onclick="downloadFile('https://raw.githubusercontent.com/MohsenUSA/TaskManager/main/SOP.md', 'SOP.md'); return false;">
-                <span class="btn-icon">↓</span>
+                <span class="btn-icon"><svg viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"/></svg></span>
                 <span>SOP</span>
             </a>
         </div>
