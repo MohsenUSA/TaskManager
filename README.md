@@ -9,9 +9,10 @@ Task Manager is a lightweight, browser-based task management system that combine
 ### Key Features
 
 - **📊 Excel Integration** - Import/export tasks seamlessly with Excel files
-- **📅 All-Day Tasks** - Tasks without time automatically display as all-day tasks in a sticky section
+- **📅 All-Day Tasks** - Tasks without time automatically display as all-day tasks in a dedicated section
 - **🕐 Real-time Tracking** - Visual current time indicator with automatic task highlighting
-- **👥 Employee Management** - Assign tasks to team members with smart assignment features
+- **👥 Multi-User Assignment** - Assign tasks to one or multiple team members with clickable badges
+- **📋 Subtasks** - Break down tasks into smaller checklist items
 - **🎯 Priority System** - Three-level priority management (High, Medium, Low)
 - **✅ Status Tracking** - Three status states (Pending, In Progress, Completed)
 - **🔍 Advanced Search** - Filter tasks by date, status, priority, employee, or custom criteria
@@ -44,8 +45,9 @@ Contains all task data with the following columns:
 - **Task** - Task title/name
 - **Description** - Detailed task description
 - **Priority** - High, Medium, or Low
-- **Assigned** - Employee name or "Everyone" for unassigned
+- **Assigned** - Employee name(s), comma-separated for multiple (e.g., "John, Sarah, Mike")
 - **Status** - Pending, In Progress, or Completed
+- **Subtasks** - Checklist items, one per line (use Alt+Enter for new lines in Excel)
 
 > **Note:** The first 3 rows are reserved for instructions/headers and are automatically skipped during import. Tasks should be entered starting from Row 4.
 
@@ -111,8 +113,9 @@ Quick task templates for frequently repeated tasks:
      - **Task**: Task title/name
      - **Priority**: Optional - defaults to "Low" (High, Medium, or Low)
      - **Status**: Optional - defaults to "Pending" (Pending, In Progress, or Completed)
-     - **Assigned**: Optional - defaults to "Everyone" (employee name or "Everyone")
+     - **Assigned**: Optional - defaults to "Everyone" (comma-separated for multiple: "John, Sarah")
      - **Description**: Optional details
+     - **Subtasks**: Optional - checklist items (use Alt+Enter for new lines in cell)
 
 4. **Import your tasks**
    - For a fresh start, click "Clear Data" first to clear any cached data, then refresh the page
@@ -150,16 +153,31 @@ Quick task templates for frequently repeated tasks:
 
 #### **All-Day Tasks**
 - Leave the Time column blank in Excel to create all-day tasks
-- All-day tasks appear in a sticky blue-bordered section at the top
-- Displayed as horizontal cards (3 per row)
+- All-day tasks appear in a blue-bordered section at the top
+- Displayed vertically (same layout as timed tasks)
+- Shows "📅 All Day" badge instead of time
 - Automatically sorted by priority: High → Medium → Low
-- Remain visible while scrolling through timed tasks
 - Perfect for deadlines, reminders, or tasks without specific times
 
 #### **Assign Tasks**
-- Click on "Everyone ➡️" badge on any unassigned task
-- Select an employee from the popup list
-- Task automatically updates with assignment
+- Click on any assignee badge (e.g., "Everyone", "John", etc.)
+- Multi-select modal opens with all employees
+- Click to select/deselect multiple assignees
+- Selected employees highlighted in purple
+- Click "Confirm" to save changes
+- Multiple assignees display as: 👥 [John] [Sarah] [Mike]
+
+#### **Subtasks**
+- Add subtasks in Excel using the Subtasks column
+- Use Alt+Enter (Windows) or Ctrl+Option+Enter (Mac) for new lines
+- Subtasks display as a checklist within the task card:
+  ```
+  📋 Subtasks:
+    ○ Review agenda
+    ○ Take notes
+    ○ Assign action items
+  ```
+- Subtasks are informational only (no status tracking)
 
 #### **Change Status**
 - Click on the status badge (Pending, In Progress, etc.)
@@ -282,7 +300,17 @@ The application provides real-time metrics:
 ### Task Assignment
 - Use "Everyone" for tasks that can be picked up by anyone
 - Assign specific names for dedicated responsibilities
-- Click "Everyone ➡️" to quickly reassign tasks
+- Click any assignee badge to open the multi-select modal
+- Assign multiple people: "John, Sarah, Mike" in Excel or via the modal
+- Selecting "Everyone" clears individual assignments
+- 👤 icon = single assignee, 👥 icon = multiple assignees
+
+### Subtasks Best Practices
+- Use subtasks to break complex tasks into smaller steps
+- Enter each subtask on a new line (Alt+Enter in Excel)
+- Keep subtask descriptions concise
+- Subtasks are informational - no separate status tracking
+- Perfect for checklists, step-by-step procedures, or action items
 
 ### Performance
 - The app updates every second to keep time indicators accurate

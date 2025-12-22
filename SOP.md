@@ -1,8 +1,8 @@
 # Task Manager - Standard Operating Procedure (SOP)
 
-**Document Version:** 1.0
+**Document Version:** 1.1
 **Effective Date:** November 2024
-**Last Updated:** November 2024
+**Last Updated:** December 2024
 
 ---
 
@@ -232,8 +232,9 @@ This SOP applies to all personnel using the Task Manager application for:
    | C      | Task        | Text                          | Yes      |
    | D      | Description | Text                          | No       |
    | E      | Priority    | High/Medium/Low               | No       |
-   | F      | Assigned    | Employee name                 | No       |
+   | F      | Assigned    | Employee name(s), comma-separated | No   |
    | G      | Status      | Pending/In Progress/Completed | No       |
+   | H      | Subtasks    | Multiple lines (Alt+Enter)    | No       |
 
    *See Section 7.2 for date/time behavior
 
@@ -252,12 +253,34 @@ This SOP applies to all personnel using the Task Manager application for:
 
 ### 7.3 Assigning Tasks
 
-**Procedure:**
+**Single Assignee:**
 
-1. Locate unassigned task (shows "Everyone" badge)
-2. Click the "Everyone" assignment badge
-3. Select employee name from dropdown list
-4. Assignment updates immediately and auto-saves
+1. Locate task to assign
+2. Click any assignee badge (e.g., "Everyone", "John", etc.)
+3. Select employee name from the list
+4. Click "Confirm" to save
+
+**Multiple Assignees:**
+
+1. Click any assignee badge to open selector
+2. Click multiple employee names to select them (checkboxes toggle)
+3. Selected employees are highlighted in purple
+4. Click "Confirm" to save all selections
+5. Task displays multiple badges: 👥 [John] [Sarah] [Mike]
+
+**Assignment Rules:**
+
+- Selecting "Everyone" clears all individual selections
+- Selecting any individual clears "Everyone"
+- If all selections are removed, defaults back to "Everyone"
+- Changes save automatically to browser storage
+
+**Excel Format for Multiple Assignees:**
+
+In the Assigned column, separate names with commas:
+```
+John, Sarah, Mike
+```
 
 ### 7.4 Updating Task Status
 
@@ -292,9 +315,50 @@ This SOP applies to all personnel using the Task Manager application for:
 
 1. Set priority in Excel before import
 2. To change: export data, modify, re-import
-3. If not set, they show as Low by default on import 
+3. If not set, they show as Low by default on import
 
-### 7.6 Filtering and Searching Tasks
+### 7.6 Adding Subtasks
+
+Subtasks are informational checklist items displayed within a task card. They help break down larger tasks into smaller steps.
+
+**Adding Subtasks in Excel:**
+
+1. Open `Database.xlsx`
+2. In the **Subtasks** column (Column H), enter each subtask on a new line
+3. Use **Alt+Enter** (Windows) or **Ctrl+Option+Enter** (Mac) to create new lines within the cell
+
+**Example Cell Content:**
+```
+Review agenda
+Take meeting notes
+Assign action items
+Follow up with stakeholders
+```
+
+**Display:**
+
+Subtasks appear in a highlighted box within the task card:
+```
+┌─────────────────────────────────────────┐
+│ Morning Meeting              🕐 9:00 AM │
+│ Daily standup                           │
+│ 🔴 High  👤 Everyone  ⏳ Pending        │
+│ ┌─────────────────────────────────────┐ │
+│ │ 📋 Subtasks:                        │ │
+│ │   ○ Review agenda                   │ │
+│ │   ○ Take meeting notes              │ │
+│ │   ○ Assign action items             │ │
+│ └─────────────────────────────────────┘ │
+└─────────────────────────────────────────┘
+```
+
+**Notes:**
+
+- Subtasks are informational only (no status tracking)
+- Subtasks are included in Excel exports
+- Subtasks display on both regular and TV standalone versions
+
+### 7.7 Filtering and Searching Tasks
 
 **Procedure:**
 
@@ -508,9 +572,10 @@ This SOP applies to all personnel using the Task Manager application for:
 
 ## 12. Revision History
 
-| Version w Standalone TV export | Date          | Author        | Changes              |
-|--------------------------------|---------------|---------------|----------------------|
-| 1.0                            | November 2024 | XPRODUCTIVITY | Initial SOP creation |
+| Version | Date          | Author        | Changes              |
+|---------|---------------|---------------|----------------------|
+| 1.0     | November 2024 | XPRODUCTIVITY | Initial SOP creation |
+| 1.1     | December 2024 | XPRODUCTIVITY | Added subtasks feature, multi-user assignment, updated task display layout |
 
 ---
 
@@ -543,11 +608,25 @@ This SOP applies to all personnel using the Task Manager application for:
 
 ### Task Type Icons
 
-| Icon                  | Meaning                              |
-|-----------------------|--------------------------------------|
-| (none)                | Standard timed task                  |
-| (sticky blue section) | All-day task                         |
-| Recycle icon          | Everyday task (appears on all dates) |
+| Icon | Meaning                              |
+|------|--------------------------------------|
+| 🕐   | Timed task (with specific time)      |
+| 📅   | All-day task                         |
+| 🔄   | Everyday task (appears on all dates) |
+
+### Assignment Icons
+
+| Icon | Meaning                              |
+|------|--------------------------------------|
+| 👤   | Single assignee or "Everyone"        |
+| 👥   | Multiple assignees                   |
+
+### Subtasks
+
+| Element | Meaning                              |
+|---------|--------------------------------------|
+| 📋      | Subtasks section header              |
+| ○       | Individual subtask item              |
 
 ---
 
