@@ -1583,7 +1583,7 @@
         </div>
 
         <div class="controls">
-            <div class="control-section">
+            <div class="control-section" id="fileUploadSection">
                 <label>📂 Load Database (.xlsx):</label>
                 <div class="file-upload-area" id="dropArea" onclick="if(event.target.id !== 'excelFile') document.getElementById('excelFile').click()">
                     <div class="file-upload-icon">📁</div>
@@ -2461,17 +2461,19 @@
                 allDayTasksHTML = '<div class="all-day-tasks-section"><div class="all-day-header">📅 All-Day Tasks</div><div class="all-day-tasks-container">';
 
                 allDayTasks.forEach((task) => {
-                    const priority = (task.Priority || 'low').toLowerCase();
-                    const status = (task.Status || 'pending').toLowerCase().replace(' ', '-');
+                    const priority = task.hasPriority ? task.Priority.toLowerCase() : '';
+                    const status = task.hasStatus ? task.Status.toLowerCase().replace(' ', '-') : '';
                     const description = `<div class="task-description">${task.Description || ''}</div>`;
                     const subtasksHTML = renderSubtasks(task.subtasks);
                     const assigneesHTML = renderAssignees(task.assignees, task.id);
                     const statusOptions = ['Pending', 'In Progress', 'Completed'];
-                    const currentStatus = task.Status || 'Pending';
+                    const currentStatus = task.Status || '';
                     const everydayIcon = task.isEveryday ? '<span class="everyday-icon" title="Everyday task - appears on all dates">🔄</span>' : '';
+                    const priorityClass = task.hasPriority ? `priority-${priority}` : '';
+                    const statusClass = task.hasStatus ? `status-${status}` : '';
 
                     allDayTasksHTML += `
-                        <div class="task-card all-day priority-${priority} status-${status}" style="position: relative;">
+                        <div class="task-card all-day ${priorityClass} ${statusClass}" style="position: relative;">
                             ${everydayIcon}
                             <div style="position: relative; z-index: 5; background: white; padding: 10px; margin: -10px;">
                                 <div class="task-header">
@@ -2479,12 +2481,15 @@
                                     <div class="task-time all-day">📅 All Day</div>
                                 </div>
                                 <div class="task-meta">
+                                    ${task.hasPriority ? `
                                     <div class="task-meta-item">
                                         <span class="priority-badge ${priority}">
                                             ${priority === 'high' ? '🔴' : priority === 'medium' ? '🟡' : '🟢'}
-                                            ${task.Priority || 'Low'}
+                                            ${task.Priority}
                                         </span>
                                     </div>
+                                    ` : ''}
+                                    ${task.hasStatus ? `
                                     <div class="status-selector">
                                         <span class="status-badge ${status}" onclick="toggleStatusDropdown(event, '${task.id}')">
                                             ${status === 'pending' ? '⏳' : status === 'in-progress' ? '🔄' : status === 'completed' ? '✅' : '❌'}
@@ -2496,6 +2501,7 @@
                                             `).join('')}
                                         </div>
                                     </div>
+                                    ` : ''}
                                     ${assigneesHTML}
                                 </div>
                                 ${description}
@@ -2511,11 +2517,13 @@
             // Render Timed Tasks Section
             if (timedTasks.length > 0) {
                 timedTasks.forEach((task, index) => {
-                    const priority = (task.Priority || 'low').toLowerCase();
-                    const status = (task.Status || 'pending').toLowerCase().replace(' ', '-');
+                    const priority = task.hasPriority ? task.Priority.toLowerCase() : '';
+                    const status = task.hasStatus ? task.Status.toLowerCase().replace(' ', '-') : '';
                     const description = task.Description ?
                         `<div class="task-description">${task.Description}</div>` : '';
                     const subtasksHTML = renderSubtasks(task.subtasks);
+                    const priorityClass = task.hasPriority ? `priority-${priority}` : '';
+                    const statusClass = task.hasStatus ? `status-${status}` : '';
 
                     const taskTime = task.Time || '00:00 AM';
                     const taskTime24 = convertTo24Hour(taskTime);
@@ -2554,13 +2562,13 @@
                     }
 
                     const statusOptions = ['Pending', 'In Progress', 'Completed'];
-                    const currentStatus = task.Status || 'Pending';
+                    const currentStatus = task.Status || '';
                     const assigneesHTML = renderAssignees(task.assignees, task.id);
                     const animClass = (!ENABLE_ANIMATIONS && taskClass === 'current') ? ' no-animation' : '';
                     const everydayIcon = task.isEveryday ? '<span class="everyday-icon" title="Everyday task - appears on all dates">🔄</span>' : '';
 
                     timedTasksHTML += `
-                        <div class="task-card priority-${priority} status-${status} ${taskClass}${animClass}" ${isCurrentTask ? `data-current-time="Current Time: ${now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })}"` : ''} style="position: relative;">
+                        <div class="task-card ${priorityClass} ${statusClass} ${taskClass}${animClass}" ${isCurrentTask ? `data-current-time="Current Time: ${now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })}"` : ''} style="position: relative;">
                             ${everydayIcon}
                             ${isCurrentTask ? `
                                 <div class="current-time-indicator${ENABLE_ANIMATIONS ? '' : ' no-animation'}" style="position: absolute; top: 50%; left: -20px; right: -20px; transform: translateY(-50%); margin: 0; z-index: 0;"></div>
@@ -2571,12 +2579,15 @@
                                     <div class="task-time">🕐 ${task.Time}</div>
                                 </div>
                                 <div class="task-meta">
+                                    ${task.hasPriority ? `
                                     <div class="task-meta-item">
                                         <span class="priority-badge ${priority}">
                                             ${priority === 'high' ? '🔴' : priority === 'medium' ? '🟡' : '🟢'}
-                                            ${task.Priority || 'Low'}
+                                            ${task.Priority}
                                         </span>
                                     </div>
+                                    ` : ''}
+                                    ${task.hasStatus ? `
                                     <div class="status-selector">
                                         <span class="status-badge ${status}" onclick="toggleStatusDropdown(event, '${task.id}')">
                                             ${status === 'pending' ? '⏳' : status === 'in-progress' ? '🔄' : status === 'completed' ? '✅' : '❌'}
@@ -2588,6 +2599,7 @@
                                             `).join('')}
                                         </div>
                                     </div>
+                                    ` : ''}
                                     ${assigneesHTML}
                                 </div>
                                 ${description}
@@ -3290,10 +3302,10 @@
                     'id="exportTVButton" style="display: none !important;"'
                 );
 
-                // Hide the file upload area in standalone mode
+                // Hide the entire file upload section in standalone mode
                 modifiedHTML = modifiedHTML.replace(
-                    'class="file-upload-area"',
-                    'class="file-upload-area" style="display: none !important;"'
+                    'id="fileUploadSection"',
+                    'id="fileUploadSection" style="display: none !important;"'
                 );
 
                 // Hide the Clear Data button in standalone mode
@@ -3481,7 +3493,9 @@
                                     isEveryday: !normalizedDateValue || normalizedDateValue === null,
                                     Assigned: assignedRaw,
                                     assignees: assignees,
-                                    Status: task.Status || 'Pending',
+                                    Status: task.Status || '',
+                                    hasPriority: !!task.Priority,
+                                    hasStatus: !!task.Status,
                                     subtasks: subtasks
                                 };
                             });
